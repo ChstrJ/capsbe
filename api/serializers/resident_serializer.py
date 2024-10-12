@@ -1,8 +1,8 @@
 
 from rest_framework import serializers
-from ..models.resident import Resident
 from django.contrib.auth.hashers import make_password
 from .validator import must_contains_letters, letters_only, numbers_only, format_09
+from ..models import Resident
 
 
 class ResidentSerializer(serializers.ModelSerializer):

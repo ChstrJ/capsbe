@@ -1,9 +1,9 @@
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
-from ..models.resident import Resident
 from ..serializers.resident_serializer import ResidentSerializer
 from ..messages import *
 from ..helpers import response
+from ..models import Resident
 from rest_framework.views import APIView
 
 class GetResidentsView(APIView):

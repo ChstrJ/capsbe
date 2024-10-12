@@ -1,7 +1,7 @@
 from rest_framework import serializers 
-from ..models.admin import Admin              
 from django.contrib.auth.hashers import make_password 
 from .validator import must_contains_letters, letters_only, numbers_only, format_09
+from ..models import User
 
 class AdminSerializer(serializers.ModelSerializer):
     
@@ -43,7 +43,7 @@ class AdminSerializer(serializers.ModelSerializer):
      )
 
     class Meta:
-        model = Admin
+        model = User
         fields = '__all__'
 
 

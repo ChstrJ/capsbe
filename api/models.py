@@ -14,7 +14,7 @@ class Admin(AbstractUser):
     updated_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.user
+        return self.id
 
 class Resident(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -31,4 +31,30 @@ class Resident(models.Model):
     
     def __str__(self):
         return f"ID: {self.id} Email: {self.email}"
+
+class Alert(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    resident_id = models.ForeignKey(Resident, related_name="resident_alerts")
+    admin_id = models.ForeignKey(Admin, related_name="admin_alerts")
+    message = models.CharField(max_length=100, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)                                                   
+    updated_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.id
+
+
+   
+class Department(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = models.EmailField(max_length=100, validators=[EmailValidator()])
+    contact_number = models.CharField(max_length=50, null=True)
+    address = models.CharField(max_length=100, null=True)
+    created_at = models.DateTimeField(auto_now_add=Tru     e)
+    updated_at = models.DateTimeField(auto_now_add=Tru
+     e)
+    
+    def __str__(self):
+        return self.id 
+
     

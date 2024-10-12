@@ -45,6 +45,7 @@ class AdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = '__all__'
+        
 
 
     def create(self, validated_data):

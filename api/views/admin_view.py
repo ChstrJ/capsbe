@@ -10,31 +10,23 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
-from ..models import User
-
+from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404
+from django.db import IntegrityError
     
 class AdminLoginView(APIView):
     permission_classes = [AllowAny]
     
     def post(self, request):
+        user = get_object_or_404(User, username=request.data['username'])
         
-        email = request.data.get("email");
-        password = request.data.get("password");
+        if not user.check_password(request.data['password']):
+            return response("not found")
         
-        if not email and not password:
-            response("Error", LOGIN_REQUIRED, status.HTTP_400_BAD_REQUEST)
+        token, created = Token.objects.get_or_create(user=user)
+        return response(f"token: {token.key}")
         
-        credentials = authenticate(username=email, password=password)
-        
-        print(credentials)
-        
-        if credentials:
-            
-            serializer = AdminSerializer(credentials)
-            
-            token, created = Token.objects.get_or_create(credentials)
-            return response(f"admin: {serializer.data} token: Bearer {token.key}")
-        return response("Error", INVALID_CREDENTIALS, status.HTTP_400_BAD_REQUEST)
+       
         
         
 class AdminRegisterView(APIView):
@@ -44,11 +36,15 @@ class AdminRegisterView(APIView):
         
         serializer = AdminSerializer(data=request.data)
         
-        if serializer.is_valid():
-            serializer.save()
-            return response(serializer.data, CREATED, status.HTTP_201_CREATED)
-        return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+        try:
+            if serializer.is_valid():
+                serializer.save()
+                return response(serializer.data, CREATED, status.HTTP_201_CREATED)
+        except IntegrityError as e:
+            return response(False, EXISTS, status.HTTP_400_BAD_REQUEST)
         
+        
+        return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
         
         
     

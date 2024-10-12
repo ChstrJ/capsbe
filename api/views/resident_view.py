@@ -5,14 +5,17 @@ from ..messages import *
 from ..helpers import response
 from ..models import Resident
 from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
 
 class GetResidentsView(APIView):
+    permission_classes = [AllowAny]
     def get(self, request):
         data = Resident.objects.all()
         serializer = ResidentSerializer(data, many=True)
         return response(serializer.data, SUCCESS, status.HTTP_200_OK)
 
 class PaginateResidentsView(APIView):
+    permission_classes = [AllowAny]
     def get(self, request):
         paginator = LimitOffsetPagination()
         data = Resident.objects.all()
@@ -21,6 +24,7 @@ class PaginateResidentsView(APIView):
         return paginator.get_paginated_response(serializer.data)
 
 class FindResidentView(APIView):
+    permission_classes = [AllowAny]
     def get(self, request, pk):
         try:
             resident = Resident.objects.get(pk=pk)
@@ -30,6 +34,7 @@ class FindResidentView(APIView):
             return response(serializer.data, NOT_FOUND, status.HTTP_404_NOT_FOUND)
 
 class CreateResidentView(APIView):
+    permission_classes = [AllowAny]
     def post(self, request):
         serializer = ResidentSerializer(data=request.data)
         if serializer.is_valid():
@@ -42,6 +47,7 @@ class CreateResidentView(APIView):
             return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
 
 class DeleteResidentView(APIView):
+    permission_classes = [AllowAny]
     def delete(self, request, pk):
         try:
             resident = Resident.objects.get(pk=pk)
@@ -51,6 +57,7 @@ class DeleteResidentView(APIView):
             return response(False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
 
 class UpdateResidentView(APIView):
+    permission_classes = [AllowAny]
     def put(self, request, pk):
         try:
             resident = Resident.objects.get(pk=pk)

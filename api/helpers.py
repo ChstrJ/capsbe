@@ -10,5 +10,5 @@ def format_response(data, message):
         'data': data
     }
 
-def response(data, message, code = status.HTTP_200_OK):
+def response(data = None, message = None, code = status.HTTP_200_OK):
     return Response(format_response(data, message), code)

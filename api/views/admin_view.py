@@ -1,7 +1,7 @@
 from rest_framework.decorators import api_view
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
-from ..serializers.admin_serializer import AdminSerializer
+from ..serializers.admin_serializer import AdminSerializer, LoginSerializer
 from ..messages import *
 from ..helpers import response
 from django.conf import settings
@@ -16,15 +16,17 @@ from django.db import IntegrityError
     
 class AdminLoginView(APIView):
     permission_classes = [AllowAny]
-    
+
     def post(self, request):
-        user = get_object_or_404(User, username=request.data['username'])
-        
-        if not user.check_password(request.data['password']):
-            return response("not found")
-        
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+
+        # Generate or retrieve the token for the authenticated user
         token, created = Token.objects.get_or_create(user=user)
-        return response(f"token: {token.key}")
+
+        return response({token.key})
+    
         
        
         

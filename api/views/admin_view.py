@@ -1,9 +1,10 @@
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
 from ..serializers.admin_serializer import AdminSerializer, LoginSerializer
 from ..messages import *
-from ..helpers import response
+from ..helpers import response, format_response
 from django.conf import settings
 from twilio.rest import Client
 from rest_framework.views import APIView
@@ -20,15 +21,21 @@ class AdminLoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        
         user = serializer.validated_data['user']
+        admin = serializer.validated_data['admin']
 
-        # Generate or retrieve the token for the authenticated user
         token, created = Token.objects.get_or_create(user=user)
 
-        return response({token.key})
-    
+        admin_serializer = AdminSerializer(admin)
         
-       
+        return response({
+            "user": admin_serializer.data, 
+            "token": token.key
+            }, 
+            SUCCESS, 
+            status.HTTP_200_OK)
+        
         
         
 class AdminRegisterView(APIView):

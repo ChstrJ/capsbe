@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import status
 
 def format_response(data, message):
+        
     return {
         'message': message,
         'timestamp': int(timezone.now().timestamp()),
@@ -12,3 +13,4 @@ def format_response(data, message):
 
 def response(data = None, message = None, code = status.HTTP_200_OK):
     return Response(format_response(data, message), code)
+

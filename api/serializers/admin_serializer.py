@@ -46,7 +46,7 @@ class AdminSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Admin
-        fields = '__all__'
+        exclude = ('last_login', 'is_superuser', 'is_staff', 'date_joined', 'created_at', 'updated_at', 'groups', 'user_permissions')
         
 
 
@@ -56,7 +56,7 @@ class AdminSerializer(serializers.ModelSerializer):
 
 
 class LoginSerializer(serializers.Serializer):
-    email = serializers.CharField()
+    username = serializers.CharField()
     password = serializers.CharField(write_only=True)
 
     def validate(self, attrs):
@@ -67,6 +67,11 @@ class LoginSerializer(serializers.Serializer):
             raise serializers.ValidationError("Username and password are required.")
 
         user = authenticate(username=username, password=password)
+        
+        try:
+            admin = Admin.objects.get(username=username)
+        except Admin.DoesNotExist:
+            raise serializers.ValidationError("Admin with this username does not exist.")
 
         if not user:
             raise AuthenticationFailed("Invalid email or password.")
@@ -75,4 +80,5 @@ class LoginSerializer(serializers.Serializer):
             raise AuthenticationFailed("User account is disabled.")
         
         attrs['user'] = user
+        attrs['admin'] = admin
         return attrs

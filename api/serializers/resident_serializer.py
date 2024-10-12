@@ -7,13 +7,26 @@ from .validator import must_contains_letters, letters_only, numbers_only, format
 
 class ResidentSerializer(serializers.ModelSerializer):
     
-    full_name = serializers.CharField(
+
+    first_name = serializers.CharField(
+        validators=[letters_only],
+        max_length=50,
+        min_length=3,
         required=True,
         error_messages={
-            'blank': 'Full name is required.'
+            'blank': 'First name is required.'
         }
     )
     
+    last_name = serializers.CharField(
+        validators=[letters_only],
+        max_length=50,
+        min_length=3,
+        required=True,
+        error_messages={
+            'blank': 'Last name is required.'
+        }
+    )
     contact_number = serializers.CharField(
         max_length=11,
         min_length=11,
@@ -25,6 +38,9 @@ class ResidentSerializer(serializers.ModelSerializer):
     )
     
     address = serializers.CharField(
+        max_length=50,
+        min_length=3,
+        validators=[letters_only],
         required=True,
         error_messages={
             'blank': 'Address is required.'
@@ -33,6 +49,9 @@ class ResidentSerializer(serializers.ModelSerializer):
 
     landmark = serializers.CharField(
         required=True,
+        max_length=50,
+        min_length=3,
+        validators=[letters_only],
         error_messages={
             'blank': 'Landmark is required.'
         }
@@ -57,8 +76,6 @@ class ResidentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Resident
         fields = '__all__'
-       
-        
         
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data['password'])

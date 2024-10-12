@@ -1,13 +1,14 @@
 import time
 from django.utils import timezone
 from rest_framework.response import Response
+from rest_framework import status
 
-def format_response(data, status):
+def format_response(data, message):
     return {
-        'message': status,
+        'message': message,
         'timestamp': int(timezone.now().timestamp()),
         'data': data
     }
 
-def response(data, status): 
-    return Response(format_response(data, status))
+def response(data, message, code = status.HTTP_200_OK):
+    return Response(format_response(data, message), code)

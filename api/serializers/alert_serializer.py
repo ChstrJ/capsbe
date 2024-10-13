@@ -20,3 +20,28 @@ class AlertSerializer(serializers.ModelSerializer):
         model = Alert
         fields = '__all__'
  
+
+class SMSSerializer(serializers.Serializer):
+    
+    receiver = serializers.CharField(
+        validators=[numbers_only],
+        max_length=100,
+        min_length=3,
+        required=True,
+        error_messages={
+            'blank': 'receiver number is required.'
+        }
+    )
+    
+    location = serializers.CharField(
+        validators=[letters_only],
+        max_length=100,
+        min_length=3,
+        required=True,
+        error_messages={
+            'blank': 'Location is required.'
+        }
+    )
+ 
+ 
+ 

@@ -19,11 +19,14 @@ from .views.department_view import (
     CreateDepartmentView,
     DeleteDepartmentView,
     UpdateDepartmentView
+)
 
+from .views.alert_view import (
+    CreateAlertView,
+    SendSmsView,
 )
 
 urlpatterns = [
-    # For Mobile App
     path('residents/', GetResidentsView.as_view(), name='get-residents'),
     path('residents/paginate/', PaginateResidentsView.as_view(), name='paginate-residents'),
     path('residents/<uuid:pk>/', FindResidentView.as_view(), name='find-resident'),
@@ -38,5 +41,10 @@ urlpatterns = [
     path('departments/generate/', GenerateDepartmentsView.as_view(), name='generate-departments'),
     path('departments/create/', CreateDepartmentView.as_view(), name='create-department'),
     path('departments/delete/uuid:pk/', DeleteDepartmentView.as_view(), name='delete-department'),
-    path('departments/update/uuid:pk/', UpdateDepartmentView.as_view(), name='update-department')
+    path('departments/update/uuid:pk/', UpdateDepartmentView.as_view(), name='update-department'),
+    
+    path('alert/create/', CreateAlertView.as_view(), name='create-alert'),
+    path('send-sms/fire', SendSmsView.as_view(), name='send-sms'),
+    path('send-sms/police', SendSmsView.as_view(), name='send-sms'),
+    path('send-sms/medical', SendSmsView.as_view(), name='send-sms'),
 ]

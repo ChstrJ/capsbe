@@ -34,8 +34,10 @@ class Resident(models.Model):
 
 class Alert(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    resident_id = models.ForeignKey(Resident, related_name="resident_alerts")
-    admin_id = models.ForeignKey(Admin, related_name="admin_alerts")
+    resident_id = models.ForeignKey(Resident, on_delete=models.CASCADE, related_name="resident_alerts")
+    admin_id = models.ForeignKey(Admin, on_delete=models.CASCADE, related_name="admin_alerts")
+    from_location = models.CharField(max_length=100, null=True)
+    to_location = models.CharField(max_length=100, null=True)
     message = models.CharField(max_length=100, null=True)
     created_at = models.DateTimeField(auto_now_add=True)                                                   
     updated_at = models.DateTimeField(auto_now_add=True)
@@ -50,9 +52,8 @@ class Department(models.Model):
     email = models.EmailField(max_length=100, validators=[EmailValidator()])
     contact_number = models.CharField(max_length=50, null=True)
     address = models.CharField(max_length=100, null=True)
-    created_at = models.DateTimeField(auto_now_add=Tru     e)
-    updated_at = models.DateTimeField(auto_now_add=Tru
-     e)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.id 

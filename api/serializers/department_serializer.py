@@ -24,7 +24,6 @@ class DepartmentSerializer(serializers.ModelSerializer):
         }
     )
 
-
     
     email = serializers.EmailField(
         required=True,

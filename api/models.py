@@ -50,9 +50,14 @@ class Alert(models.Model):
 class Department(models.Model):
 
     TAGS = (
-       ('fire', 'Fire', 'FIRE'),
-       ('health', 'Health', 'HEALTH'),
-       ('police', 'Police', 'POLICE')
+       ('fire', 'Fire'),
+       ('health', 'Health'),
+       ('police', 'Police')
+    )
+
+    STATUS = (
+       ('ongoing', 'Ongoing'),
+       ('available', 'Available'),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -60,6 +65,7 @@ class Department(models.Model):
     email = models.EmailField(max_length=100, validators=[EmailValidator()], unique=True)
     contact_number = models.CharField(max_length=50, null=True)
     address = models.CharField(max_length=100, null=True)
+    status = models.CharField(max_length=10, choices=STATUS, null=True, default="available")
     tags = models.CharField(max_length=100, choices=TAGS, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)

@@ -2,7 +2,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
 from ..serializers.alert_serializer import AlertSerializer, SMSSerializer
 from ..messages import *
-from ..helpers import response, send_medical_response, send_firetuck_response, send_police_response, default_response, convert_to_639
+from ..helpers import response, send_medical_response, send_fire_response, send_police_response, default_response, convert_to_639
 from ..models import Alert
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
@@ -34,14 +34,15 @@ class SendSmsView(APIView):
             location = serializer.validated_data['location']
             convert = convert_to_639(receiver)
             
-            message = default_response(location)
             if route == 'fire':
-                message = send_firetuck_response(location)
+                message = send_fire_response(location)
             elif route == 'medical':
                 message = send_medical_response(location)
             elif route == 'police':
                 message = send_police_response(location)
-                
+            else:
+                message = default_response(location)
+            
             twilio = TwilioService()
             twilio.send_sms(message, receiver=convert)
             return response(True, SUCCESS, status.HTTP_200_OK)

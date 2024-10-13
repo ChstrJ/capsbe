@@ -14,7 +14,7 @@ def format_response(data, message):
 def response(data = None, message = None, code = status.HTTP_200_OK):
     return Response(format_response(data, message), code)
 
-def send_firetuck_response(location):
+def send_fire_response(location):
     return f"Alert: Fire truck incoming on {location}. Clear the way immediately and stay alert." 
 
 def send_medical_response(location):

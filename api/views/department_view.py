@@ -54,8 +54,13 @@ class CreateDepartmentView(APIView):
     
     def post(self, request):
         serializer = DepartmentSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
+        
+        try:
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+        except IntegrityError:
+            return response(False, EXISTS, status.HTTP_400_BAD_REQUEST)
+        
         return response(serializer.data, SUCCESS, status.HTTP_201_CREATED)
     
 
@@ -70,6 +75,9 @@ class UpdateDepartmentView(APIView):
                 return response(True, UPDATED, status.HTTP_200_OK)
         except Department.DoesNotExist:
             return response(False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
+        except IntegrityError:
+            return response(False, EXISTS, status.HTTP_400_BAD_REQUEST)
+
 
     def patch(self, request, pk):
         try:
@@ -81,6 +89,9 @@ class UpdateDepartmentView(APIView):
             return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
         except Department.DoesNotExist:
             return response(False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
+        except IntegrityError:
+            return response(False, EXISTS, status.HTTP_400_BAD_REQUEST)
+            
     
 class DeleteDepartmentView(APIView):
     permission_classes = [AllowAny]

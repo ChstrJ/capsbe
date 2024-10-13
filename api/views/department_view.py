@@ -4,6 +4,7 @@ from ..serializers.department_serializer import DepartmentSerializer
 from ..messages import *
 from ..helpers import response
 from ..models import Department
+from ..data import departments_data
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from django.db import IntegrityError
@@ -25,21 +26,18 @@ class GenerateDepartmentsView(APIView):
     
     def post(self, request):
         
-        departments_data = [
-        {'name': 'Fire Department', 'email': 'fire@example.com', 'contact_number': '123-456-7890', 'address': '123 Fire St.'},
-        {'name': 'Medical Department', 'email': 'medical@example.com', 'contact_number': '987-654-3210', 'address': '456 Medical Rd.'},
-        {'name': 'Police Department','email': 'police@example.com', 'contact_number': '555-555-5555', 'address': '789 Police Ave.'},
-        ]
-        
-        departments = [
-            Department(
+        departments = []
+
+        for data in departments_data
+            departments.append(
+                Department(
                 name=data['name'],
                 email=data['email'],
+                tags=data['tags'],
                 contact_number=data['contact_number'],
                 address=data['address']
             )
-            for data in departments_data
-        ]
+            )
 
         try:
             Department.objects.bulk_create(departments)

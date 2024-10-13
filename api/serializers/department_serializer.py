@@ -14,6 +14,17 @@ class DepartmentSerializer(serializers.ModelSerializer):
             'blank': 'Name is required.'
         }
     )
+
+    tags = serializers.CharField(
+        max_length=50,
+        min_length=3,
+        required=True,
+        error_messages={
+            'blank': 'Tags is required.'
+        }
+    )
+
+
     
     email = serializers.EmailField(
         required=True,

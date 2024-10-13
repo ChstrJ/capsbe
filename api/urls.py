@@ -13,6 +13,15 @@ from .views.admin_view import (
     AdminRegisterView
 )
 
+from .views.department_view import (
+    GetDepartmentsView,
+    GenerateDepartmentsView,
+    CreateDepartmentView,
+    DeleteDepartmentView,
+    UpdateDepartmentView
+
+)
+
 urlpatterns = [
     # For Mobile App
     path('residents/', GetResidentsView.as_view(), name='get-residents'),
@@ -23,5 +32,11 @@ urlpatterns = [
     path('residents/update/<uuid:pk>/', UpdateResidentView.as_view(), name='update-resident'),
     
     path('admin/login/', AdminLoginView.as_view(), name='admin-login'),
-    path('admin/register/', AdminRegisterView.as_view(), name='admin-register')
+    path('admin/register/', AdminRegisterView.as_view(), name='admin-register'),
+    
+    path('departments/', GetDepartmentsView.as_view(), name='get-departments'),
+    path('departments/generate/', GenerateDepartmentsView.as_view(), name='generate-departments'),
+    path('departments/create/', CreateDepartmentView.as_view(), name='create-department'),
+    path('departments/delete/uuid:pk/', DeleteDepartmentView.as_view(), name='delete-department'),
+    path('departments/update/uuid:pk/', UpdateDepartmentView.as_view(), name='update-department')
 ]

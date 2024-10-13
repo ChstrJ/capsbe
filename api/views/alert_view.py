@@ -15,6 +15,6 @@ class CreateAlertView(APIView):
 
         serializer = AlertSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-
         serializer.save()
+        return response(serializer.data, SUCCESS, status.HTTP_201_CREATED)
 

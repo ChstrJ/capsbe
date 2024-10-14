@@ -48,6 +48,13 @@ class SendSmsView(APIView):
             return response(True, SUCCESS, status.HTTP_200_OK)
         except Exception as e:
             return response(False, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+    
+class SendEmailView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
         
-        
+        twilio = TwilioService()
+        email = twilio.send_email("cheschesj@gmail.com", "test", "test")
+        return response(email)
         

@@ -27,4 +27,7 @@ def default_response(location):
 
 def convert_to_639(number):
     
+    if number[0] == "+":
+        return 
+    
     return f"+639{number[2:]}"

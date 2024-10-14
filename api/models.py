@@ -26,6 +26,8 @@ class Resident(models.Model):
     address = models.CharField(max_length=100, null=True)
     contact_number = models.CharField(max_length=100, null=True)
     landmark = models.CharField(max_length=100, null=True)
+    latitude = models.CharField(max_length=100, null=True)
+    longitude = models.CharField(max_length=100, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     
@@ -45,19 +47,17 @@ class Alert(models.Model):
     def __str__(self):
         return self.id
 
-
-   
 class Department(models.Model):
 
     TAGS = (
-       ('fire', 'Fire'),
-       ('health', 'Health'),
-       ('police', 'Police')
+    ('fire', 'Fire'),
+    ('health', 'Health'),
+    ('police', 'Police')
     )
 
     STATUS = (
-       ('ongoing', 'Ongoing'),
-       ('available', 'Available'),
+    ('dispatched', 'Dispatched'),
+    ('available', 'Available'),
     )
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

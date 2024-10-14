@@ -14,11 +14,8 @@ class GetDepartmentsView(APIView):
     permission_classes = [AllowAny]
     
     def get(self, request):
-        
         departments = Department.objects.all()
-        
         serializer = DepartmentSerializer(departments, many=True)
-        
         return response(serializer.data, SUCCESS, status.HTTP_200_OK)
     
 class GenerateDepartmentsView(APIView):
@@ -28,7 +25,7 @@ class GenerateDepartmentsView(APIView):
         
         departments = []
 
-        for data in departments_data
+        for data in departments_data:
             departments.append(
                 Department(
                 name=data['name'],
@@ -45,6 +42,21 @@ class GenerateDepartmentsView(APIView):
             return response(False, EXISTS, status.HTTP_400_BAD_REQUEST)
         
         return response(True, SUCCESS, status.HTTP_201_CREATED)
+    
+class GetAvailableCountView(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request):
+        
+        fire = Department.objects.filter(tags="fire", status="available").count()
+        health = Department.objects.filter(tags="health", status="available").count()
+        police = Department.objects.filter(tags="police", status="available").count()
+        
+        return response({
+            "fire": fire,
+            "health": health,
+            "police": police
+        }, SUCCESS, status.HTTP_200_OK)
         
         
 class CreateDepartmentView(APIView):

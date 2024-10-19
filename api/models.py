@@ -49,11 +49,16 @@ class Resident(models.Model):
         return f"ID: {self.id}"
 
 class Alert(models.Model):
+    
+    ALERT_TYPE = (
+    ('fire', 'Fire'),
+    ('health', 'Health'),
+    ('police', 'Police')
+    )
+    
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     resident_id = models.ForeignKey(Resident, on_delete=models.CASCADE, related_name="resident_alerts")
-    admin_id = models.ForeignKey(Admin, on_delete=models.CASCADE, related_name="admin_alerts")
-    from_location = models.CharField(max_length=100, null=True)
-    to_location = models.CharField(max_length=100, null=True)
+    alert_type = models.CharField(max_length=100, choices=ALERT_TYPE, null=True)
     message = models.CharField(max_length=100, null=True)
     created_at = models.DateTimeField(auto_now_add=True)                                                   
     updated_at = models.DateTimeField(auto_now_add=True)

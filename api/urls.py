@@ -46,13 +46,12 @@ urlpatterns = [
     path('departments/create', CreateDepartmentView.as_view(), name='create-department'),
     path('departments/delete/uuid:pk', DeleteDepartmentView.as_view(), name='delete-department'),
     path('departments/update/uuid:pk', UpdateDepartmentView.as_view(), name='update-department'),
-    path('departments/available/', GetAvailableCountView.as_view(), name='get-available'),
+    path('departments/available', GetAvailableCountView.as_view(), name='get-available'),
     
     path('alert/create', CreateAlertView.as_view(), name='create-alert'),
     path('send-sms/fire', SendSmsView.as_view(), name='send-sms'),
     path('send-sms/police', SendSmsView.as_view(), name='send-sms'),
     path('send-sms/medical', SendSmsView.as_view(), name='send-sms'),
-    
     
     path('send-email', SendEmailView.as_view(), name='send-sms'),
 ]

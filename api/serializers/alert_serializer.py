@@ -21,14 +21,11 @@ class AlertSerializer(serializers.ModelSerializer):
         }
     )
     
-    alert_type = serializers.CharField(
-        validators=[letters_only],
-        max_length=100,
-        min_length=3,
+    alert_type = serializers.ChoiceField(
         required=True,
+        choices=ALERT_TYPE,
         error_messages={
-            'blank': 'Message is required.',
-            'invalid_choice': 'Invalid alert type. Choose one of: health, fire, police',
+            'invalid_choice': 'Please choose the following: police, health, fire'
         }
     )
     

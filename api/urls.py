@@ -24,6 +24,7 @@ from .views.department_view import (
 )
 
 from .views.alert_view import (
+    ListAlertsView,
     CreateAlertView,
     SendSmsView,
     SendEmailView
@@ -48,6 +49,7 @@ urlpatterns = [
     path('departments/update/uuid:pk', UpdateDepartmentView.as_view(), name='update-department'),
     path('departments/available', GetAvailableCountView.as_view(), name='get-available'),
     
+    path('alerts', ListAlertsView.as_view(), name='list-alert'),
     path('send/alert', CreateAlertView.as_view(), name='send-alert'),
     path('send-sms/fire', SendSmsView.as_view(), name='send-sms'),
     path('send-sms/police', SendSmsView.as_view(), name='send-sms'),

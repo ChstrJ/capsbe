@@ -10,16 +10,23 @@ from ..services.twilio import TwilioService
 from django.conf import settings
 
 
+
+class ListAlertsView(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request):
+        alerts = Alert.objects.all()
+        serializer = AlertSerializer(alerts, many=True)
+        return response(serializer.data, SUCCESS, status.HTTP_200_OK)
+    
 class CreateAlertView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def post(self, request):
         
         user = request.user
         
         resident = user.residents
-        
-        print(resident)
         
         alert_data = {
             **request.data,

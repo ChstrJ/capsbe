@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
 from ..serializers.admin_serializer import AdminSerializer, LoginSerializer
+from ..serializers.user_serializer import UserSerializer
 from ..messages import *
 from ..helpers import response, format_response
 from django.conf import settings
@@ -42,8 +43,10 @@ class AdminRegisterView(APIView):
     permission_classes = [AllowAny]
     
     def post(self, request):
+        data = request.data.copy()
+        data['user_type'] = "admin"
         
-        serializer = AdminSerializer(data=request.data)
+        serializer = UserSerializer(data=data)
         
         try:
             if serializer.is_valid():
@@ -51,7 +54,6 @@ class AdminRegisterView(APIView):
                 return response(serializer.data, CREATED, status.HTTP_201_CREATED)
         except IntegrityError as e:
             return response(False, EXISTS, status.HTTP_400_BAD_REQUEST)
-        
         
         return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
         

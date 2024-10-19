@@ -3,13 +3,28 @@ from django.db import models
 from django.core.validators import EmailValidator
 from django.contrib.auth.models import AbstractUser
 
-class Admin(AbstractUser):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+class User(AbstractUser):
+    
+    USER_TYPE = (
+    ('admin', 'Admin'),
+    ('resident', 'Resident'),
+    )
+    
     first_name = models.CharField(max_length=100, null=True)
     last_name = models.CharField(max_length=100, null=True)
     username = models.CharField(max_length=100, null=True, unique=True)
     email = models.CharField(max_length=100, null=True, unique=True, validators=[EmailValidator()])
     password = models.CharField(max_length=100, null=True)
+    user_type = models.CharField(max_length=10, choices=USER_TYPE, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)                                                
+    updated_at = models.DateTimeField(auto_now_add=True)
+
+
+    pass
+
+class Admin(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="admins")
     created_at = models.DateTimeField(auto_now_add=True)                                                
     updated_at = models.DateTimeField(auto_now_add=True)
 
@@ -17,17 +32,12 @@ class Admin(AbstractUser):
         return self.id
 
 class Resident(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    first_name = models.CharField(max_length=100, null=True)
-    last_name = models.CharField(max_length=100, null=True)
-    username = models.CharField(max_length=100, null=True, unique=True)
-    email = models.EmailField(max_length=100, unique=True, validators=[EmailValidator()])
-    password = models.CharField(max_length=100, null=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="residents")
     address = models.CharField(max_length=100, null=True)
     contact_number = models.CharField(max_length=100, null=True)
     landmark = models.CharField(max_length=100, null=True)
-    latitude = models.CharField(max_length=100, null=True)
-    longitude = models.CharField(max_length=100, null=True)
+    latitude = models.DecimalField(max_digits=6, decimal_places=2, null=True)
+    longitude = models.DecimalField(max_digits=6, decimal_places=2, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     

@@ -25,6 +25,7 @@ class AlertSerializer(serializers.ModelSerializer):
         required=True,
         choices=ALERT_TYPE,
         error_messages={
+            'blank': 'Alert type is required.',
             'invalid_choice': 'Please choose the following: police, health, fire'
         }
     )

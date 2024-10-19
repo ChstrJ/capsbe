@@ -22,7 +22,6 @@ class AlertSerializer(serializers.ModelSerializer):
     )
     
     alert_type = serializers.CharField(
-        choices=ALERT_TYPE,
         validators=[letters_only],
         max_length=100,
         min_length=3,

@@ -28,6 +28,7 @@ class User(AbstractUser):
         return f"{self.id} {self.user_type}"
 
 class Admin(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="admins")
     created_at = models.DateTimeField(auto_now_add=True)                                                
     updated_at = models.DateTimeField(auto_now_add=True)
@@ -36,6 +37,7 @@ class Admin(models.Model):
         return self.id
 
 class Resident(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="residents")
     address = models.CharField(max_length=100, null=True)
     contact_number = models.CharField(max_length=100, null=True)
@@ -57,7 +59,8 @@ class Alert(models.Model):
     )
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    resident_id = models.ForeignKey(Resident, on_delete=models.CASCADE, related_name="resident_alerts")
+    resident_id = models.ForeignKey(Resident, on_delete=models.CASCADE, null=True, related_name="resident")
+    admin_id = models.ForeignKey(Admin, on_delete=models.CASCADE, null=True, related_name="admin")
     alert_type = models.CharField(max_length=100, choices=ALERT_TYPE, null=True)
     message = models.CharField(max_length=100, null=True)
     created_at = models.DateTimeField(auto_now_add=True)                                                   
@@ -93,3 +96,4 @@ class Department(models.Model):
         return self.id 
 
     
+

@@ -3,18 +3,30 @@ from rest_framework import status
 from ..serializers.alert_serializer import AlertSerializer, SMSSerializer
 from ..messages import *
 from ..helpers import response, send_medical_response, send_fire_response, send_police_response, default_response, convert_to_639
-from ..models import Alert
+from ..models import Alert, User, Resident
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from ..services.twilio import TwilioService
 from django.conf import settings
 
 
 class CreateAlertView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
 
     def post(self, request):
-        serializer = AlertSerializer(data=request.data)
+        
+        user = request.user
+        
+        resident = user.residents
+        
+        print(resident)
+        
+        alert_data = {
+            **request.data,
+            'resident_id': resident.id
+        }
+        
+        serializer = AlertSerializer(data=alert_data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return response(serializer.data, SUCCESS, status.HTTP_201_CREATED)

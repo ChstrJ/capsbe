@@ -26,13 +26,13 @@ class GetResidentsView(APIView):
                 "email": user_data.get('email'),
                 "username": user_data.get('username'),
                 "user_type": user_data.get('user_type'),
-                "created_at": user_data.get('created_at'),
-                "updated_at": user_data.get('updated_at'),
                 "contact_number": resident_data.get('contact_number'),
                 "address": resident_data.get('address'),
                 "landmark": resident_data.get('landmark'),
                 "latitude": resident_data.get('latitude'),
                 "longitude": resident_data.get('longitude'),
+                "created_at": user_data.get('created_at'),
+                "updated_at": user_data.get('updated_at'),
             }
             
             response_data.append(formatted_data)
@@ -71,13 +71,13 @@ class FindResidentView(APIView):
                 "email": data['email'],
                 "username":data['username'],
                 "user_type": data['username'],
-                "created_at": data['created_at'],
-                "updated_at": data['updated_at'],
                 "contact_number": resident_data['contact_number'],
                 "address": resident_data['address'],
                 "landmark": resident_data['landmark'],
                 "latitude": resident_data['latitude'],
                 "longitude": resident_data['longitude'],
+                "created_at": data['created_at'],
+                "updated_at": data['updated_at'],
         }
         
         return response(response_data, SUCCESS, status.HTTP_200_OK)    

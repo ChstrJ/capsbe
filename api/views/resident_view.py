@@ -12,7 +12,33 @@ class GetResidentsView(APIView):
     def get(self, request):
         data = Resident.objects.all()
         serializer = ResidentSerializer(data, many=True)
-        return response(serializer.data, SUCCESS, status.HTTP_200_OK)
+        
+        response_data = []
+        
+        for resident_data in serializer.data:
+            
+            user_data = resident_data.get('user')
+            
+            formatted_data = {
+                "id": user_data.get('id'),
+                "first_name": user_data.get('first_name'),
+                "last_name": user_data.get('last_name'),
+                "email": user_data.get('email'),
+                "username": user_data.get('username'),
+                "user_type": user_data.get('user_type'),
+                "created_at": user_data.get('created_at'),
+                "updated_at": user_data.get('updated_at'),
+                "contact_number": resident_data.get('contact_number'),
+                "address": resident_data.get('address'),
+                "landmark": resident_data.get('landmark'),
+                "latitude": resident_data.get('latitude'),
+                "longitude": resident_data.get('longitude'),
+            }
+            
+            response_data.append(formatted_data)
+        
+        
+        return response(response_data, SUCCESS, status.HTTP_200_OK)
 
 class PaginateResidentsView(APIView):
     permission_classes = [AllowAny]

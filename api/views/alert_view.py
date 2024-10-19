@@ -9,8 +9,6 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from ..services.twilio import TwilioService
 from django.conf import settings
 
-
-
 class ListAlertsView(APIView):
     permission_classes = [AllowAny]
     

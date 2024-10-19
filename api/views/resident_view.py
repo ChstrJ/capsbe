@@ -54,9 +54,8 @@ class FindResidentView(APIView):
                 "longitude":resident_data['longitude'],
         }
         
-        
         return response(response_data, SUCCESS, status.HTTP_200_OK)    
-           
+    
 # class CreateResidentView(APIView):
 #     permission_classes = [AllowAny]
 #     def post(self, request):
@@ -84,7 +83,7 @@ class UpdateResidentView(APIView):
     permission_classes = [AllowAny]
     def put(self, request, pk):
         try:
-            resident = Resident.objects.get(pk=pk)
+            resident = Resident.objects.get(user_id=pk)
             serializer = ResidentSerializer(resident, data=request.data, partial=False)
             if serializer.is_valid():
                 serializer.save()
@@ -94,7 +93,7 @@ class UpdateResidentView(APIView):
 
     def patch(self, request, pk):
         try:
-            resident = Resident.objects.get(pk=pk)
+            resident = Resident.objects.get(user_id=pk)
             serializer = ResidentSerializer(resident, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()

@@ -19,9 +19,18 @@ class ListAlertsView(APIView):
         serializer = AlertSerializer(alerts, many=True)
         return response(serializer.data, SUCCESS, status.HTTP_200_OK)
     
+class DeleteAlertView(APIView):
+    permission_classes = [AllowAny]
+    def delete(self, request, pk):
+        try:
+            alerts = Alert.objects.get(pk=pk)
+            alerts.delete()
+            return response(True, SUCCESS, status.HTTP_200_OK)
+        except Alert.DoesNotExist:
+            return response(False, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+
 class CreateAlertView(APIView):
     permission_classes = [AllowAny]
-
     def post(self, request):
         
         user = request.user

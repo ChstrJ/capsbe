@@ -93,17 +93,18 @@ class ResidentSerializer(serializers.ModelSerializer):
         required=True,
         validators=[numbers_only, format_09],
         error_messages={
-            'blank': 'Contact Number is required.'
+            'blank': 'Contact Number is required.',
+            'min_length': 'Minimum of 11 characters',
+            'max_length': 'Maximum of 11 characters',
         }
     )
     
     address = serializers.CharField(
-        max_length=50,
         min_length=3,
-        validators=[letters_only],
         required=True,
         error_messages={
-            'blank': 'Address is required.'
+            'blank': 'Address is required.',
+            'min_length': 'Minimum of 3 characters',
         }
     )
 
@@ -117,8 +118,24 @@ class ResidentSerializer(serializers.ModelSerializer):
         }
     )
     
-    latitude = serializers.DecimalField(max_digits=9, decimal_places=6, required=True, allow_null=True)
-    longitude = serializers.DecimalField(max_digits=9, decimal_places=6, required=True, allow_null=True)
+    latitude = serializers.DecimalField(
+        max_digits=9, 
+        decimal_places=6, 
+        required=True, 
+        error_messages={
+            'blank': 'Latitude is required.'
+        }
+    )
+    
+    longitude = serializers.DecimalField(
+        max_digits=9, 
+        decimal_places=6, 
+        required=True, 
+        error_messages={
+            'blank': 'Longitude is required.'
+        }
+    )
+    
     
     def create(self, validated_data):
         user_data = validated_data.pop('user')

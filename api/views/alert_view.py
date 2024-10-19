@@ -19,6 +19,17 @@ class ListAlertsView(APIView):
         serializer = AlertSerializer(alerts, many=True)
         return response(serializer.data, SUCCESS, status.HTTP_200_OK)
     
+class FindAlertView(APIView):
+    permission_classes = [AllowAny]
+    
+    def get(self, request, pk):
+        try:
+            alert = Alert.objects.get(pk=pk)
+            serializer = AlertSerializer(alert)
+            return response(serializer.data, SUCCESS, status.HTTP_200_OK)
+        except Alert.DoesNotExist:
+            return response(False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
+        
 class DeleteAlertView(APIView):
     permission_classes = [AllowAny]
     def delete(self, request, pk):
@@ -27,7 +38,7 @@ class DeleteAlertView(APIView):
             alerts.delete()
             return response(True, SUCCESS, status.HTTP_200_OK)
         except Alert.DoesNotExist:
-            return response(False, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+            return response(False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
 
 class CreateAlertView(APIView):
     permission_classes = [AllowAny]

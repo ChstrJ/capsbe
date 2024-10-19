@@ -11,6 +11,10 @@ class User(AbstractUser):
     ('resident', 'Resident'),
     )
     
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     first_name = models.CharField(max_length=100, null=True)
     last_name = models.CharField(max_length=100, null=True)
     username = models.CharField(max_length=100, null=True, unique=True)
@@ -20,8 +24,8 @@ class User(AbstractUser):
     created_at = models.DateTimeField(auto_now_add=True)                                                
     updated_at = models.DateTimeField(auto_now_add=True)
 
-
-    pass
+    def __str__(self):
+        return f"{self.id} {self.user_type}"
 
 class Admin(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="admins")
@@ -42,7 +46,7 @@ class Resident(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"ID: {self.id} Email: {self.email}"
+        return f"ID: {self.id}"
 
 class Alert(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

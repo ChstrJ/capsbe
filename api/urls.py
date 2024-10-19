@@ -8,9 +8,10 @@ from .views.resident_view import (
     UpdateResidentView,
 )
 
-from .views.admin_view import (
-    AdminLoginView,
-    AdminRegisterView
+from .views.auth_view import (
+    LoginView,
+    AdminRegisterView,
+    ResidentRegisterView
 )
 
 from .views.department_view import (
@@ -36,8 +37,9 @@ urlpatterns = [
     path('residents/delete/<uuid:pk>', DeleteResidentView.as_view(), name='delete-resident'),
     path('residents/update/<uuid:pk>', UpdateResidentView.as_view(), name='update-resident'),
     
-    path('admin/login', AdminLoginView.as_view(), name='admin-login'),
-    path('admin/register', AdminRegisterView.as_view(), name='admin-register'),
+    path('auth/login', LoginView.as_view(), name='admin-login'),
+    path('auth/register/admin', AdminRegisterView.as_view(), name='admin-register'),
+    path('auth/register/resident', ResidentRegisterView.as_view(), name='resident-register'),
     
     path('departments', GetDepartmentsView.as_view(), name='get-departments'),
     path('departments/generate', GenerateDepartmentsView.as_view(), name='generate-departments'),

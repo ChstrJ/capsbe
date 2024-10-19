@@ -56,18 +56,18 @@ class FindResidentView(APIView):
         
         return response(response_data, SUCCESS, status.HTTP_200_OK)    
     
-# class CreateResidentView(APIView):
-#     permission_classes = [AllowAny]
-#     def post(self, request):
-#         serializer = ResidentSerializer(data=request.data)
-#         if serializer.is_valid():
-#             try:
-#                 serializer.save()
-#                 return response(serializer.data, CREATED, status.HTTP_201_CREATED)
-#             except Exception as e:
-#                 return response(e, SERVER_ERROR, status.HTTP_500_INTERNAL_SERVER_ERROR)
-#         else:
-#             return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+class CreateResidentView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        serializer = ResidentSerializer(data=request.data)
+        if serializer.is_valid():
+            try:
+                serializer.save()
+                return response(serializer.data, CREATED, status.HTTP_201_CREATED)
+            except Exception as e:
+                return response(e, SERVER_ERROR, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        else:
+            return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
 
 class DeleteResidentView(APIView):
     permission_classes = [AllowAny]

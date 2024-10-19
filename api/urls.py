@@ -3,7 +3,7 @@ from .views.resident_view import (
     GetResidentsView,
     PaginateResidentsView,
     FindResidentView,
-    #CreateResidentView,
+    CreateResidentView,
     DeleteResidentView,
     UpdateResidentView,
 )
@@ -35,7 +35,7 @@ urlpatterns = [
     path('residents', GetResidentsView.as_view(), name='get-residents'),  # get
     path('residents/paginate', PaginateResidentsView.as_view(), name='paginate-residents'),  # get
     path('residents/<uuid:pk>', FindResidentView.as_view(), name='find-resident'), # get/id
-    #path('residents/create', CreateResidentView.as_view(), name='create-resident'), # post
+    path('residents/create', CreateResidentView.as_view(), name='create-resident'), # post
     path('residents/delete/<uuid:pk>', DeleteResidentView.as_view(), name='delete-resident'), # delete
     path('residents/update/<uuid:pk>', UpdateResidentView.as_view(), name='update-resident'), # put/patch
     

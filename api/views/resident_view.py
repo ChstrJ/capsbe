@@ -44,14 +44,14 @@ class FindResidentView(APIView):
                 "last_name": data['last_name'],
                 "email": data['email'],
                 "username":data['username'],
-                "user_type":  data['username'],
+                "user_type": data['username'],
                 "created_at": data['created_at'],
                 "updated_at": data['updated_at'],
-                "contact_number":resident_data['contact_number'],
-                "address":resident_data['address'],
-                "landmark":resident_data['landmark'],
-                "latitude":resident_data['latitude'],
-                "longitude":resident_data['longitude'],
+                "contact_number": resident_data['contact_number'],
+                "address": resident_data['address'],
+                "landmark": resident_data['landmark'],
+                "latitude": resident_data['latitude'],
+                "longitude": resident_data['longitude'],
         }
         
         return response(response_data, SUCCESS, status.HTTP_200_OK)    

@@ -17,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
             'max_length': 'Maximum of 50 characters.'
         }
     )
+    
     last_name = serializers.CharField(
         max_length=50,
         min_length=3,
@@ -27,13 +28,21 @@ class UserSerializer(serializers.ModelSerializer):
         }
     )
     
+    username = serializers.CharField(
+        required=True,
+        validators=[letters_only],
+        error_messages={
+            'blank': 'Username is required.'
+        }
+    )
+    
     email = serializers.EmailField(
         required=True,
         error_messages={
             'blank': 'Email is required.'
         }
     )
-
+    
     password = serializers.CharField(
         required=True,
         write_only=True,

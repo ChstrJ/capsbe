@@ -36,7 +36,6 @@ class GetResidentsView(APIView):
             
             response_data.append(formatted_data)
         
-        
         return response(response_data, SUCCESS, status.HTTP_200_OK)
 
 class PaginateResidentsView(APIView):

@@ -31,10 +31,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
+CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -49,6 +51,7 @@ INSTALLED_APPS = [
 AUTH_USER_MODEL = 'api.User'
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -71,9 +74,16 @@ TWILIO_SID=os.getenv("TWILIO_SID")
 TWILIO_PHONE_NO=os.getenv("TWILIO_PHONE_NO")
 TWILIO_AUTH_TOKEN=os.getenv("TWILIO_AUTH_TOKEN")
 SENDGRID_KEY=os.getenv("SENDGRID_KEY")
-DEFAULT_EMAIL=os.getenv("DEFAULT_EMAIL")
 
 ROOT_URLCONF = 'config.urls'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'live.smtp.mailtrap.io'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv('MAILTRAP_USER')
+EMAIL_HOST_PASSWORD = os.getenv('MAILTRAP_PASSWORD')
+DEFAULT_EMAIL=os.getenv("DEFAULT_EMAIL")
+EMAIL_USE_TLS = True
 
 TEMPLATES = [
     {

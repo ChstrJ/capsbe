@@ -37,6 +37,22 @@ class AlertSerializer(serializers.ModelSerializer):
 
 class SMSSerializer(serializers.Serializer):
     
+    ALERT_TYPE = (
+    ('fire', 'Fire'),
+    ('health', 'Health'),
+    ('police', 'Police')
+    )
+
+    
+    alert_type = serializers.ChoiceField(
+        required=True,
+        choices=ALERT_TYPE,
+        error_messages={
+            'blank': 'Alert type is required.',
+            'invalid_choice': 'Please choose the following: police, health, fire'
+        }
+    )
+    
     receiver = serializers.CharField(
         validators=[numbers_only],
         max_length=100,
@@ -56,6 +72,4 @@ class SMSSerializer(serializers.Serializer):
             'blank': 'Location is required.'
         }
     )
- 
- 
- 
+    

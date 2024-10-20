@@ -132,5 +132,26 @@ class AdminRegisterView(APIView):
         return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
         
         
+class GenerateAdminAccountView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request):
+        
+        user = {
+            "first_name": "test",
+            "last_name": "test",
+            "email": "email@gmail.com",
+            "password": "admin123"
+        }
+        
+        serializer = UserSerializer(data=user)
+        
+        try:
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+        except IntegrityError:
+            return response(False, EXISTS, status.HTTP_400_BAD_REQUEST)
+        
+        return response("Success!", SUCCESS, status.HTTP_200_OK)
     
     

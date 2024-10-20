@@ -7,6 +7,7 @@ from .views.resident_view import (
     DeleteResidentView,
     UpdateResidentView,
     VerifyResidentView,
+    GenerateDummyResidentsView,
 )
 
 from .views.auth_view import (
@@ -36,6 +37,7 @@ from .views.alert_view import (
 
 urlpatterns = [
     path('account/generate', GenerateAdminAccountView.as_view(), name='generate-admin'), # post
+    path('residents/generate/<int:count>', GenerateDummyResidentsView.as_view(), name='generate-residents'),  # post
     
     path('residents', GetResidentsView.as_view(), name='get-residents'),  # get
     path('residents/paginate', PaginateResidentsView.as_view(), name='paginate-residents'),  # get

@@ -1,9 +1,10 @@
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
 from rest_framework.views import APIView
-from ..serializers.user_serializer import ResidentSerializer, UserSerializer
+from rest_framework.permissions import AllowAny
+from ..serializers.user_serializer import ResidentSerializer
 from ..messages import *
-from ..helpers import response
+from ..helpers import response, create_dummy_residents
 from ..models import Resident, User
 from ..permissions import IsAdmin
 
@@ -28,8 +29,6 @@ class GetResidentsView(APIView):
                 "contact_number": resident_data.get('contact_number'),
                 "address": resident_data.get('address'),
                 "landmark": resident_data.get('landmark'),
-                "latitude": resident_data.get('latitude'),
-                "longitude": resident_data.get('longitude'),
                 "created_at": user_data.get('created_at'),
                 "updated_at": user_data.get('updated_at'),
             }
@@ -71,8 +70,6 @@ class FindResidentView(APIView):
                 "contact_number": resident_data['contact_number'],
                 "address": resident_data['address'],
                 "landmark": resident_data['landmark'],
-                "latitude": resident_data['latitude'],
-                "longitude": resident_data['longitude'],
                 "created_at": data['created_at'],
                 "updated_at": data['updated_at'],
         }
@@ -140,4 +137,18 @@ class VerifyResidentView(APIView):
         resident.save()
         
         return response("Verified", SUCCESS, status.HTTP_200_OK)
-            
+    
+    
+class GenerateDummyResidentsView(APIView):
+    permission_classes = [AllowAny]
+    
+    def post(self, request, count):
+        
+        residents_data = create_dummy_residents(count)
+        
+        for resident in residents_data:
+            serializer = ResidentSerializer(data=resident)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+        
+        return response(True, SUCCESS, status.HTTP_200_OK)

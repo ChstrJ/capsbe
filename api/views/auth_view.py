@@ -40,7 +40,6 @@ class LoginView(APIView):
             status.HTTP_200_OK)
         
 
- 
 class ResidentRegisterView(APIView):
     permission_classes = [AllowAny]
     

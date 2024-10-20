@@ -122,25 +122,7 @@ class ResidentSerializer(serializers.ModelSerializer):
         }
     )
     
-    latitude = serializers.DecimalField(
-        max_digits=9, 
-        decimal_places=6, 
-        required=True, 
-        error_messages={
-            'blank': 'Latitude is required.'
-        }
-    )
-    
-    longitude = serializers.DecimalField(
-        max_digits=9, 
-        decimal_places=6, 
-        required=True, 
-        error_messages={
-            'blank': 'Longitude is required.'
-        }
-    )
-    
-    
+        
     def create(self, validated_data):
         user_data = validated_data.pop('user')
         user_data['user_type'] = 'resident'
@@ -154,7 +136,7 @@ class ResidentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Resident
-        fields = ["user", "verified", "contact_number", "address", "latitude", "longitude", "landmark"]
+        fields = ["user", "verified", "contact_number", "address", "landmark"]
         
 
 class LoginSerializer(serializers.Serializer):

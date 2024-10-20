@@ -44,13 +44,11 @@ class CreateAlertView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
         
-        user = request.user
-        
-        resident = user.residents
+        resident = request.user.residents
         
         alert_data = {
             **request.data,
-            'resident_id': resident.id
+            'resident_id': resident.id,
         }
         
         serializer = AlertSerializer(data=alert_data)

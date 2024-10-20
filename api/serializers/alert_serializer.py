@@ -53,23 +53,32 @@ class SMSSerializer(serializers.Serializer):
         }
     )
     
-    receiver = serializers.CharField(
-        validators=[numbers_only],
-        max_length=100,
-        min_length=3,
-        required=True,
+    latitude = serializers.DecimalField(
+        max_digits=9, 
+        decimal_places=6, 
+        required=True, 
         error_messages={
-            'blank': 'receiver number is required.'
+            'blank': 'Latitude is required.'
         }
     )
     
-    location = serializers.CharField(
+    longitude = serializers.DecimalField(
+        max_digits=9, 
+        decimal_places=6, 
+        required=True, 
+        error_messages={
+            'blank': 'Longitude is required.'
+        }
+    )
+    
+    
+    address = serializers.CharField(
         validators=[letters_only],
         max_length=100,
         min_length=3,
         required=True,
         error_messages={
-            'blank': 'Location is required.'
+            'blank': 'Address is required.'
         }
     )
     

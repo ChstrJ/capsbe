@@ -140,7 +140,7 @@ class GenerateAdminAccountView(APIView):
         user = {
             "first_name": "test",
             "last_name": "test",
-            "email": "email@gmail.com",
+            "email": "test@gmail.com",
             "password": "admin123"
         }
         

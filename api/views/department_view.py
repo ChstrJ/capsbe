@@ -1,20 +1,21 @@
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from django.db import IntegrityError
 from ..serializers.department_serializer import DepartmentSerializer
 from ..messages import *
 from ..helpers import response
 from ..models import Department
 from ..data import departments_data
-from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
-from django.db import IntegrityError
+from ..permissions import IsAdmin
 
 
 class GetDepartmentsView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
     
     def get(self, request):
-        departments = Department.objects.all()
+        departments = Department.objects.all().order_by('created_at')
         serializer = DepartmentSerializer(departments, many=True)
         return response(serializer.data, SUCCESS, status.HTTP_200_OK)
     
@@ -44,7 +45,7 @@ class GenerateDepartmentsView(APIView):
         return response(True, SUCCESS, status.HTTP_201_CREATED)
     
 class GetAvailableCountView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
     
     def get(self, request):
         
@@ -60,7 +61,7 @@ class GetAvailableCountView(APIView):
         
         
 class CreateDepartmentView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
     
     def post(self, request):
         serializer = DepartmentSerializer(data=request.data)
@@ -75,7 +76,7 @@ class CreateDepartmentView(APIView):
     
 
 class UpdateDepartmentView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
     def put(self, request, pk):
         try:
             resident = Department.objects.get(pk=pk)
@@ -104,7 +105,7 @@ class UpdateDepartmentView(APIView):
             
     
 class DeleteDepartmentView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
     def delete(self, request, pk):
         try:
             resident = Department.objects.get(pk=pk)

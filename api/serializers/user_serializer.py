@@ -24,17 +24,21 @@ class UserSerializer(serializers.ModelSerializer):
         validators=[letters_only],
         error_messages={
             'min_length': 'Minimum of 3 characters.',
-            'max_length': 'Maximum of 50 characters.'
+            'max_length': 'Maximum of 50 characters.',
         }
     )
     
-    username = serializers.CharField(
-        required=True,
-        validators=[letters_only],
-        error_messages={
-            'blank': 'Username is required.'
-        }
-    )
+    # username = serializers.CharField(
+    #     required=True,
+    #     max_length=50,
+    #     min_length=3,
+    #     error_messages={
+    #         'blank': 'Username is required.',
+    #         'min_length': 'Minimum of 3 characters.',
+    #         'max_length': 'Maximum of 50 characters.',
+
+    #     }
+    # )
     
     email = serializers.EmailField(
         required=True,
@@ -60,7 +64,7 @@ class UserSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = User
-        exclude = ('last_login', 'is_superuser', 'is_staff', 'is_active', 'date_joined', 'groups', 'user_permissions')
+        exclude = ('last_login', 'is_superuser', 'is_staff', 'is_active', 'date_joined', 'groups', 'user_permissions', "username")
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -143,13 +147,14 @@ class ResidentSerializer(serializers.ModelSerializer):
         serializer = UserSerializer(data=user_data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        validated_data['verified'] = False
         resident = Resident.objects.create(user=user, **validated_data)
         
         return resident
     
     class Meta:
         model = Resident
-        fields = ["user", "contact_number", "address", "latitude", "longitude", "landmark"]
+        fields = ["user", "verified", "contact_number", "address", "latitude", "longitude", "landmark"]
         
 
 class LoginSerializer(serializers.Serializer):

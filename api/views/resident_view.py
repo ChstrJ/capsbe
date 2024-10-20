@@ -1,16 +1,16 @@
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
+from rest_framework.views import APIView
 from ..serializers.user_serializer import ResidentSerializer, UserSerializer
 from ..messages import *
 from ..helpers import response
 from ..models import Resident, User
-from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from ..permissions import IsAdmin
 
 class GetResidentsView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
     def get(self, request):
-        data = Resident.objects.all()
+        data = Resident.objects.all().order_by('created_at')
         serializer = ResidentSerializer(data, many=True)
         
         response_data = []
@@ -24,7 +24,6 @@ class GetResidentsView(APIView):
                 "first_name": user_data.get('first_name'),
                 "last_name": user_data.get('last_name'),
                 "email": user_data.get('email'),
-                "username": user_data.get('username'),
                 "user_type": user_data.get('user_type'),
                 "contact_number": resident_data.get('contact_number'),
                 "address": resident_data.get('address'),
@@ -41,18 +40,17 @@ class GetResidentsView(APIView):
         return response(response_data, SUCCESS, status.HTTP_200_OK)
 
 class PaginateResidentsView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
     def get(self, request):
         paginator = LimitOffsetPagination()
-        data = Resident.objects.all()
+        data = Resident.objects.all().order_by('created_at')
         paginate_data = paginator.paginate_queryset(data, request)
         serializer = ResidentSerializer(paginate_data, many=True)
         return paginator.get_paginated_response(serializer.data)
 
 class FindResidentView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
     def get(self, request, pk):
-        
         try:
             resident = Resident.objects.get(user_id=pk)
         except Resident.DoesNotExist:
@@ -68,9 +66,9 @@ class FindResidentView(APIView):
                 "id": data['id'],
                 "first_name": data['first_name'],
                 "last_name": data['last_name'],
+                "verified": resident_data['verified'],
                 "email": data['email'],
-                "username":data['username'],
-                "user_type": data['username'],
+                "user_type": data['user_type'],
                 "contact_number": resident_data['contact_number'],
                 "address": resident_data['address'],
                 "landmark": resident_data['landmark'],
@@ -83,7 +81,7 @@ class FindResidentView(APIView):
         return response(response_data, SUCCESS, status.HTTP_200_OK)    
     
 class CreateResidentView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
     def post(self, request):
         serializer = ResidentSerializer(data=request.data)
         if serializer.is_valid():
@@ -96,7 +94,7 @@ class CreateResidentView(APIView):
             return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
 
 class DeleteResidentView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
     def delete(self, request, pk):
         try:
             resident = Resident.objects.get(user_id=pk)
@@ -106,7 +104,7 @@ class DeleteResidentView(APIView):
             return response(False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
 
 class UpdateResidentView(APIView):
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdmin]
     def put(self, request, pk):
         try:
             resident = Resident.objects.get(user_id=pk)
@@ -127,3 +125,20 @@ class UpdateResidentView(APIView):
             return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
         except Resident.DoesNotExist:
             return response(False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
+
+class VerifyResidentView(APIView):
+    permission_classes = [IsAdmin]
+    
+    def patch(self, request, pk):
+        try:
+            resident = Resident.objects.get(user_id=pk)
+        except Resident.DoesNotExist:
+            return response (False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
+        
+        serializer = ResidentSerializer(resident, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        resident.verified = True
+        resident.save()
+        
+        return response("Verified", SUCCESS, status.HTTP_200_OK)
+            

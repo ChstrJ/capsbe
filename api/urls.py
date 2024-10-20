@@ -6,6 +6,7 @@ from .views.resident_view import (
     CreateResidentView,
     DeleteResidentView,
     UpdateResidentView,
+    VerifyResidentView,
 )
 
 from .views.auth_view import (
@@ -39,6 +40,7 @@ urlpatterns = [
     path('residents/create', CreateResidentView.as_view(), name='create-resident'), # post
     path('residents/delete/<uuid:pk>', DeleteResidentView.as_view(), name='delete-resident'), # delete
     path('residents/update/<uuid:pk>', UpdateResidentView.as_view(), name='update-resident'), # put/patch
+    path('residents/verify/<uuid:pk>', VerifyResidentView.as_view(), name='verify-resident'), # patch
     
     path('auth/login', LoginView.as_view(), name='admin-login'), # post
     path('auth/register/admin', AdminRegisterView.as_view(), name='admin-register'), # post

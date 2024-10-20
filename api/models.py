@@ -17,7 +17,7 @@ class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     first_name = models.CharField(max_length=100, null=True)
     last_name = models.CharField(max_length=100, null=True)
-    username = models.CharField(max_length=100, null=True, unique=True)
+    username = models.CharField(max_length=100, null=True)
     email = models.CharField(max_length=100, null=True, unique=True, validators=[EmailValidator()])
     password = models.CharField(max_length=100, null=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE, null=True)
@@ -44,6 +44,7 @@ class Resident(models.Model):
     landmark = models.CharField(max_length=100, null=True)
     latitude = models.DecimalField(max_digits=6, decimal_places=2, null=True)
     longitude = models.DecimalField(max_digits=6, decimal_places=2, null=True)
+    verified = models.BooleanField(default=False, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
     

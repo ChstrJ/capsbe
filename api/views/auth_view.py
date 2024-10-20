@@ -1,17 +1,13 @@
 from rest_framework.decorators import api_view
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework import status
-from ..serializers.user_serializer import UserSerializer, ResidentSerializer, AdminSerializer, LoginSerializer
-from ..messages import *
-from ..helpers import response, format_response
-from django.conf import settings
-from twilio.rest import Client
 from rest_framework.views import APIView
+from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import authenticate
-from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
+from ..serializers.user_serializer import UserSerializer, ResidentSerializer, AdminSerializer, LoginSerializer
+from ..messages import *
+from ..helpers import response
 from ..models import User
  
 class LoginView(APIView):
@@ -56,13 +52,13 @@ class ResidentRegisterView(APIView):
                 "last_name": request.data.get("last_name"),
                 "email": request.data.get("email"),
                 "password": request.data.get("password"),
-                "username": request.data.get("username"),
             }
         }
 
         resident_data = {
             "contact_number": request.data.get("contact_number"),
             "address": request.data.get("address"),
+            "verified": request.data.get("verified"),
             "landmark": request.data.get("landmark"),
             "latitude": request.data.get("latitude"),
             "longitude": request.data.get("longitude"),
@@ -81,7 +77,7 @@ class ResidentRegisterView(APIView):
                 "first_name": resident.user.first_name,
                 "last_name": resident.user.last_name,
                 "email": resident.user.email,
-                "username": resident.user.username,
+                "verified": resident.verified,
                 "user_type": resident.user.user_type,
                 "created_at": resident.user.created_at.isoformat(),
                 "updated_at": resident.user.updated_at.isoformat(),
@@ -94,7 +90,7 @@ class ResidentRegisterView(APIView):
                 
                 return response(response_data, CREATED, status.HTTP_201_CREATED)
         except IntegrityError as e:
-            return response(False, EXISTS, status.HTTP_400_BAD_REQUEST)
+            return response(str(e), EXISTS, status.HTTP_400_BAD_REQUEST)
         
         return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
         
@@ -110,7 +106,6 @@ class AdminRegisterView(APIView):
                 "last_name": request.data.get("last_name"),
                 "email": request.data.get("email"),
                 "password": request.data.get("password"),
-                "username": request.data.get("username"),
             }
         }
         
@@ -125,7 +120,6 @@ class AdminRegisterView(APIView):
                 "first_name": admin.user.first_name,
                 "last_name": admin.user.last_name,
                 "email": admin.user.email,
-                "username": admin.user.username,
                 "user_type": admin.user.user_type,
                 "created_at": admin.user.created_at.isoformat(),
                 "updated_at": admin.user.updated_at.isoformat(),

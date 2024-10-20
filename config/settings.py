@@ -77,13 +77,21 @@ SENDGRID_KEY=os.getenv("SENDGRID_KEY")
 
 ROOT_URLCONF = 'config.urls'
 
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'live.smtp.mailtrap.io'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = os.getenv('MAILTRAP_USER')
+# EMAIL_HOST_PASSWORD = os.getenv('MAILTRAP_PASSWORD')
+# DEFAULT_EMAIL=os.getenv("DEFAULT_EMAIL")
+# EMAIL_USE_TLS = True
+
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'live.smtp.mailtrap.io'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.getenv('MAILTRAP_USER')
-EMAIL_HOST_PASSWORD = os.getenv('MAILTRAP_PASSWORD')
-DEFAULT_EMAIL=os.getenv("DEFAULT_EMAIL")
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_PORT = 587
+EMAIL_HOST_USER = os.getenv('EMAIL_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_PASSWORD')
 
 TEMPLATES = [
     {

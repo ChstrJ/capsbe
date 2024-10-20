@@ -6,10 +6,11 @@ from django.conf import settings
 from ..permissions import IsAdmin
 from ..serializers.alert_serializer import AlertSerializer, SMSSerializer
 from ..messages import *
-from ..helpers import response, send_medical_response, send_fire_response, send_police_response, default_response, convert_to_639
+from ..helpers import response, convert_to_639, now, send_sms_response, send_email_subject, send_email_message
 from ..models import Alert, User, Resident
 from ..services.twilio import TwilioService
-from ..services.mailtrap import MailtrapService
+from ..services.email import EmailService
+import asyncio
 
 class ListAlertsView(APIView):
     permission_classes = [IsAdmin]
@@ -66,20 +67,12 @@ class SendSmsView(APIView):
         serializer = SMSSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         try:
-            route = request.data.get("alert_type")
+            type = serializer.validated_data['alert_type']
             receiver = serializer.validated_data['receiver']
-            location = serializer.validated_data['location']
+            location = serializer.validated_data['address']
             convert = convert_to_639(receiver)
             
-            if route == 'fire':
-                message = send_fire_response(location)
-            elif route == 'medical':
-                message = send_medical_response(location)
-            elif route == 'police':
-                message = send_police_response(location)
-            else:
-                message = default_response(location)
-            
+            message = send_sms_response(location, type)           
             twilio = TwilioService()
             twilio.send_sms(message, receiver=convert)
             return response(True, SUCCESS, status.HTTP_200_OK)
@@ -91,8 +84,16 @@ class SendEmailView(APIView):
     
     def post(self, request):
         
-        mailtrap = MailtrapService()
+        email = EmailService()
         
-        email = mailtrap.send_email("test", "cheschesj@gmail.com")
-        return response(email)
+        subject = send_email_subject("navotas", "fire")
+        message = send_email_message("address 123 123", "fire department", "fire", "0947793941")
+        to_email = "cheschesj2@gmail.com"
+        
+        try: 
+            email.send_email(subject, message, to_email)
+            return response(True, SUCCESS, status.HTTP_200_OK)
+        except Exception as e:
+            return response(str(e), BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+        
         

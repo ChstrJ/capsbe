@@ -24,21 +24,3 @@ class TwilioService():
         except Exception as e:
             return False
         
-    def send_email(self, to_email, subject, from_email = settings.DEFAULT_EMAIL):
-        try:
-            self.sg = Mail(
-                from_email,
-                to_email,
-                subject,
-                plain_text_content="test"
-            )
-            return True
-        except TwilioRestException as t:
-            print(t.code, t.msg)
-            return False
-        except Exception as e:
-            print("error", e)
-            return False
-    
-
-    

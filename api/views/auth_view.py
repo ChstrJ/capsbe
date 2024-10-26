@@ -59,8 +59,6 @@ class ResidentRegisterView(APIView):
             "address": request.data.get("address"),
             "verified": request.data.get("verified"),
             "landmark": request.data.get("landmark"),
-            "latitude": request.data.get("latitude"),
-            "longitude": request.data.get("longitude"),
         }
         
         data = {**user_data, **resident_data}
@@ -83,8 +81,6 @@ class ResidentRegisterView(APIView):
                 "contact_number": resident.contact_number,
                 "address": resident.address,
                 "landmark": resident.landmark,
-                "latitude": resident.latitude,
-                "longitude": resident.longitude,
                 }
                 
                 return response(response_data, CREATED, status.HTTP_201_CREATED)

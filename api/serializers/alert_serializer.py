@@ -30,6 +30,24 @@ class AlertSerializer(serializers.ModelSerializer):
         }
     )
     
+    latitude = serializers.DecimalField(
+        max_digits=9, 
+        decimal_places=6, 
+        required=True, 
+        error_messages={
+            'blank': 'Latitude is required.'
+        }
+    )
+    
+    longitude = serializers.DecimalField(
+        max_digits=9, 
+        decimal_places=6, 
+        required=True, 
+        error_messages={
+            'blank': 'Longitude is required.'
+        }
+    )
+    
     class Meta:
         model = Alert
         fields = '__all__'
@@ -52,25 +70,6 @@ class SMSSerializer(serializers.Serializer):
             'invalid_choice': 'Please choose the following: police, health, fire'
         }
     )
-    
-    latitude = serializers.DecimalField(
-        max_digits=9, 
-        decimal_places=6, 
-        required=True, 
-        error_messages={
-            'blank': 'Latitude is required.'
-        }
-    )
-    
-    longitude = serializers.DecimalField(
-        max_digits=9, 
-        decimal_places=6, 
-        required=True, 
-        error_messages={
-            'blank': 'Longitude is required.'
-        }
-    )
-    
     
     address = serializers.CharField(
         validators=[letters_only],

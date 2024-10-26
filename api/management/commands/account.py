@@ -12,6 +12,7 @@ class Command(BaseCommand):
     
     def handle(self, *args, **kwargs):
         self.generate_account()
+        self.create_resident()
         
     def generate_account(self):
         

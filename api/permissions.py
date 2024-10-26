@@ -22,6 +22,9 @@ class IsResident(BasePermission):
         try:
             if not request.user:
                 raise PermissionDenied("User is not authenticated.")
+            
+            if not request.user.verified == False:
+                raise PermissionDenied("User is not verified.")
         
             if request.user.user_type not in ['resident']:
                 raise PermissionDenied("You do not have permission to access this resource.")

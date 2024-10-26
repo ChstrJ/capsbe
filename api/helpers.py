@@ -60,7 +60,8 @@ def send_email_message(address, department, type, number):
     <html>
         <body>
             <h2><strong>Dear {department},</strong></h2>
-            
+           
+            <p><strong>Emergency Type: {type},</strong></p> 
             <p>This is an emergency alert. A emergency response needed at the following location:</p>
             
             <h3><strong>📍 Location:</strong> {address}<br>

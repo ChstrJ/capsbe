@@ -125,7 +125,10 @@ class ResidentSerializer(serializers.ModelSerializer):
         serializer = UserSerializer(data=user_data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
-        validated_data['verified'] = False
+        
+        if not validated_data['verified']:
+            validated_data['verified'] = False
+            
         resident = Resident.objects.create(user=user, **validated_data)
         
         return resident

@@ -34,8 +34,8 @@ def send_sms_response(location, type):
     return response
         
 
-def send_email_subject(location, type):
-    return f"🚨 Emergency Alert 🚨: {type.upper()} Detected at {location}, Reported: {now()}"
+def send_email_subject(type, landmark):
+    return f"🚨 {type.upper()} Emergency Alert 🚨: Urgent Response needed at {landmark}, Reported at {now()}"
 
 # def send_email_message(address, department, type, number):
 #     # Initialize body as a single string
@@ -54,18 +54,31 @@ def send_email_subject(location, type):
 #     return body
  
  
-def send_email_message(address, department, type, number):
-    # Use HTML formatting
+def send_email_message(user_details, resident_details, alert_details, department):
+    number = "09982373882"
+    
+    if alert_details['alert_type'] == 'police':
+        custom = 'This is an emergency alert. Police assistance is urgently needed at the following location:'
+    elif alert_details['alert_type'] == 'health':
+        custom = 'This is an emergency alert. An ambulance is urgently needed at the following location:'
+    elif alert_details['alert_type'] == 'fire':
+        custom = 'This is an emergency alert. Fire response is urgently needed at the following location:'
+    
     body = f"""
     <html>
         <body>
-            <h2><strong>Dear {department},</strong></h2>
-           
-            <p><strong>Emergency Type: {type},</strong></p> 
-            <p>This is an emergency alert. A emergency response needed at the following location:</p>
+            <p><strong>To {department},</strong></p>
             
-            <h3><strong>📍 Location:</strong> {address}<br>
-            <strong>🕛 Date & Time:</strong> {now()}</h3>
+            <h3><strong><p>{custom}</p></strong><h3>
+            
+            <h3><strong>📍 Location:</strong> {resident_details['address']}<br>
+            <strong>🕛 Date & Time:</strong> {now()}<br>
+            <strong>👤 First Name: {user_details['first_name']}</strong><br>
+            <strong>👤 Last Name: {user_details['last_name']}</strong><br>
+            <strong>📞 Contact number: {resident_details['contact_number']}</strong>
+            </h3>
+            
+            <h3><a href="https://www.google.com/maps/place/{alert_details['latitude']},{alert_details['longitude']}">🗺️ Google Maps Link</a></h3>
             
             <p>Immediate assistance is required. Please respond as soon as possible. For any further information or updates, contact us at <strong>{number}</strong>.</p>
             

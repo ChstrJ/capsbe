@@ -4,10 +4,12 @@ from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
 from ..permissions import IsAdmin, IsResident
+from ..serializers.user_serializer import ResidentSerializer, UserSerializer
 from ..serializers.alert_serializer import AlertSerializer, SMSSerializer
+from ..serializers.department_serializer import DepartmentSerializer
 from ..messages import *
 from ..helpers import response, convert_to_639, now, send_sms_response, send_email_subject, send_email_message
-from ..models import Alert, User, Resident
+from ..models import Alert, User, Resident, Department
 from ..services.twilio import TwilioService
 from ..services.email import EmailService
 import asyncio
@@ -83,10 +85,32 @@ class SendEmailView(APIView):
     
     def post(self, request):
         
+        dept_id = request.data.get("department_id")
+        alert_id = request.data.get("alert_id")
+        
+        #Alert Data 
+        alert = Alert.objects.get(id=alert_id)
+        alert_serializer = AlertSerializer(alert)
+        alert_data = alert_serializer.data
+        
+        # Department Data
+        dept = Department.objects.get(id=dept_id)
+        dept_serializer = DepartmentSerializer(dept)
+        dept_data = dept_serializer.data
+        
+        # Residents Data
+        resident = Resident.objects.get(id=alert_data['resident'])
+        resident_serializer = ResidentSerializer(resident)
+        resident_data = resident_serializer.data
+        
+        user_data = resident_data.get('user')
+        
+        all_data = {**user_data, **resident_data}
+        
         email = EmailService()
         
-        subject = send_email_subject("navotas", "fire")
-        message = send_email_message("address 123 123", "fire department", "fire", "0947793941")
+        subject = send_email_subject(alert_data['alert_type'], resident_data['landmark'])
+        message = send_email_message(all_data['user'], all_data, alert_data, dept_data['name'])
         to_email = "cheschesj2@gmail.com"
         
         try: 

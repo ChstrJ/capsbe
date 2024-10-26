@@ -11,25 +11,21 @@ class IsAdmin(BasePermission):
         
             if request.user.user_type not in ['admin']:
                 raise PermissionDenied("You do not have permission to access this resource.")
-        except Exception as e:
+        except PermissionError as e:
             raise PermissionDenied("Authentication token is not provided.")
-        
         return True
     
 class IsResident(BasePermission):
     
     def has_permission(self, request, view):
         try:
-            if not request.user:
+            if not request.user.is_authenticated:
                 raise PermissionDenied("User is not authenticated.")
             
-            if not request.user.verified == False:
-                raise PermissionDenied("User is not verified.")
+            if request.user.residents.verified == False:
+                raise PermissionDenied("User is not verified")
         
-            if request.user.user_type not in ['resident']:
-                raise PermissionDenied("You do not have permission to access this resource.")
-        except Exception as e:
+        except PermissionError as e:
             raise PermissionDenied("Authentication token is not provided.")
-        
+                
         return True
-    

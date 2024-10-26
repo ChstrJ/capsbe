@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from django.conf import settings
-from ..permissions import IsAdmin
+from ..permissions import IsAdmin, IsResident
 from ..serializers.alert_serializer import AlertSerializer, SMSSerializer
 from ..messages import *
 from ..helpers import response, convert_to_639, now, send_sms_response, send_email_subject, send_email_message
@@ -42,7 +42,7 @@ class DeleteAlertView(APIView):
             return response(False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
 
 class CreateAlertView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsResident]
     def post(self, request):
         
         resident = request.user.residents
@@ -62,7 +62,6 @@ class SendSmsView(APIView):
     permission_classes = [IsAdmin]
 
     def post(self, request):
-        
         
         serializer = SMSSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)

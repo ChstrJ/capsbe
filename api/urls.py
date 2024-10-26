@@ -56,12 +56,12 @@ urlpatterns = [
     path('departments/create', CreateDepartmentView.as_view(), name='create-department'), # post
     path('departments/delete/<uuid:pk>', DeleteDepartmentView.as_view(), name='delete-department'), # delete
     path('departments/update/<uuid:pk>', UpdateDepartmentView.as_view(), name='update-department'), # put/patch
-    path('departments/available', GetAvailableCountView.as_view(), name='get-available'), # get
+    path('departments/available-count', GetAvailableCountView.as_view(), name='get-available'), # get
     
     path('alerts', ListAlertsView.as_view(), name='list-alert'), # get
     path('alerts/delete/<uuid:pk>', DeleteAlertView.as_view(), name='delete-alert'), # delete
     path('alerts/<uuid:pk>', FindAlertView.as_view(), name='find-alert'), # get
-    path('send/alert', CreateAlertView.as_view(), name='send-alert'), # post
+    path('send-alert', CreateAlertView.as_view(), name='send-alert'), # post
     path('send-sms', SendSmsView.as_view(), name='send-sms'), # post
     
     # not working yet

@@ -1,5 +1,5 @@
 from django.core.management import BaseCommand
-from models import Resident, Alert, Department, Admin
+from ...models import Resident, Alert, Department, Admin, User
 from faker import Faker
 from ...serializers.user_serializer import UserSerializer, ResidentSerializer
 from ...serializers.alert_serializer import AlertSerializer
@@ -32,16 +32,48 @@ class Command(BaseCommand):
         
         for _ in range(count):
             Department.objects.create(
-                name=fake.department(),
+                name=fake.name(),
                 email=fake.name(),
-                tags=fake.random_choices(['fire', 'health', 'police']),
-                contact_number=fake.phone_number(),
+                tags=random.choice(['fire', 'health', 'police']),
+                contact_number='09477936942',
                 address=fake.address(),
-                status=fake.random_choices(['available', 'dispatched'])
+                status=random.choice(['available', 'dispatched'])
             )
             
             
         self.stdout.write('Departments Done!')
+        
+        
+    def generate_residents(self, count = 10):
+        
+        data = []
+        for _ in range(count):
+            
+            user_data = {
+            "user": {
+                "first_name": fake.first_name(),
+                "last_name": fake.last_name(),
+                "email": fake.email(),
+                "password": "test123123",
+            }
+            }
+
+            resident_data = {
+            "contact_number": "09477936945",
+            "address": fake.address(),
+            "verified": True,
+            "landmark": "Malabon"
+            }
+            
+            temp = {**user_data, **resident_data}
+            
+            data.append(temp)
+        
+        serializer = ResidentSerializer(data=data, many=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        
+        self.stdout.write('Residents Done!')
         
     def generate_alerts(self, count = 10):
         
@@ -55,47 +87,18 @@ class Command(BaseCommand):
             
             alert_data = {
             'resident_id': residents_id,
-            'message': fake.text(),
-            'alert_type': fake.random_choices(['health', 'police', 'fire']),
-            "latitude": fake.latitude(),
-            "longitude": fake.longitude(),
+            'message': "test test test",
+            'alert_type': random.choice(['fire', 'health', 'police']),
+            "latitude": random.choice(['14.6538']),
+            "longitude": random.choice(['120.9602']),
             }
             
             data.append(alert_data)
             
-        serializer = AlertSerializer(data=data)
+        serializer = AlertSerializer(data=data, many=True)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         
         self.stdout.write('Alerts Done!')
     
-    def generate_residents(self, count = 10):
-        
-        data = []
-        for _ in range(count):
-            
-            user_data = {
-            "user": {
-                "first_name": fake.first_name(),
-                "last_name": fake.last_name(),
-                "email": fake.email(),
-                "password": fake.email(),
-            }
-            }
-
-            resident_data = {
-            "contact_number": fake.contact_number(),
-            "address": fake.address(),
-            "verified": fake.random_choices([False, True]),
-            "landmark": fake.random_choices(['navotas', 'malabon']),
-            }
-            
-            temp = {**user_data, **resident_data}
-            
-            data.append(temp)
-        
-        serializer = ResidentSerializer(data=data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        
-        self.stdout.write('Residents Done!')
+    

@@ -2,7 +2,7 @@
 from django.core.management import BaseCommand
 from faker import Faker
 from ...models import Resident, Alert, Department, Admin, User
-from ...serializers.user_serializer import UserSerializer, ResidentSerializer
+from ...serializers.user_serializer import UserSerializer, ResidentSerializer, AdminSerializer
 
 fake = Faker('en_PH')
 
@@ -17,13 +17,15 @@ class Command(BaseCommand):
     def generate_account(self):
         
         user = {
-            "first_name": "test",
-            "last_name": "test",
-            "email": "test@gmail.com",
-            "password": "admin123"
+            "user": {
+                "first_name": fake.first_name(),
+                "last_name": fake.last_name(),
+                "email": 'test@gmail.com',
+                "password": 'admin123',
+            }
         }
         
-        serializer = UserSerializer(data=user)
+        serializer = AdminSerializer(data=user)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         
@@ -36,7 +38,7 @@ class Command(BaseCommand):
                 "first_name": fake.first_name(),
                 "last_name": fake.last_name(),
                 "email": 'test1@gmail.com',
-                "password": '123123123',
+                "password": 'admin123',
             }
         }
 

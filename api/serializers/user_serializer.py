@@ -10,20 +10,16 @@ class UserSerializer(serializers.ModelSerializer):
     
     first_name = serializers.CharField(
         max_length=50,
-        min_length=3,
         validators=[letters_only],
         error_messages={
-            'min_length': 'Minimum of 3 characters.',
             'max_length': 'Maximum of 50 characters.'
         }
     )
     
     last_name = serializers.CharField(
         max_length=50,
-        min_length=3,
         validators=[letters_only],
         error_messages={
-            'min_length': 'Minimum of 3 characters.',
             'max_length': 'Maximum of 50 characters.',
         }
     )

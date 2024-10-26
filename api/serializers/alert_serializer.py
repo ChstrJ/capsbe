@@ -12,8 +12,6 @@ class AlertSerializer(serializers.ModelSerializer):
     )
 
     message = serializers.CharField(
-        validators=[letters_only],
-        max_length=100,
         min_length=3,
         required=True,
         error_messages={
@@ -31,8 +29,8 @@ class AlertSerializer(serializers.ModelSerializer):
     )
     
     latitude = serializers.DecimalField(
-        max_digits=9, 
-        decimal_places=6, 
+        max_digits=12,
+        decimal_places=8, 
         required=True, 
         error_messages={
             'blank': 'Latitude is required.'
@@ -40,8 +38,8 @@ class AlertSerializer(serializers.ModelSerializer):
     )
     
     longitude = serializers.DecimalField(
-        max_digits=9, 
-        decimal_places=6, 
+        max_digits=12, 
+        decimal_places=8, 
         required=True, 
         error_messages={
             'blank': 'Longitude is required.'

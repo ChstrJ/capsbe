@@ -61,7 +61,7 @@ class Command(BaseCommand):
             resident_data = {
             "contact_number": "09477936945",
             "address": fake.address(),
-            "verified": True,
+            "verified": random.choice([True, False]),
             "landmark": "Malabon"
             }
             

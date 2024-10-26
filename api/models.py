@@ -58,8 +58,8 @@ class Alert(models.Model):
     )
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    resident_id = models.ForeignKey(Resident, on_delete=models.CASCADE, null=True, related_name="residents")
-    admin_id = models.ForeignKey(Admin, on_delete=models.CASCADE, null=True, related_name="admins")
+    resident = models.ForeignKey(Resident, on_delete=models.CASCADE, null=True, related_name="residents")
+    admin = models.ForeignKey(Admin, on_delete=models.CASCADE, null=True, related_name="admins")
     alert_type = models.CharField(max_length=100, choices=ALERT_TYPE, null=True)
     latitude = models.DecimalField(max_digits=12, decimal_places=8, null=True)
     longitude = models.DecimalField(max_digits=12, decimal_places=8, null=True)

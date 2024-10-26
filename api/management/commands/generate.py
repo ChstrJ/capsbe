@@ -80,13 +80,16 @@ class Command(BaseCommand):
         data = []
         
         residents_ids = Resident.objects.values_list('id', flat=True)
+        admins_ids = Admin.objects.values_list('id', flat=True)
         
         for _ in range(count):
             
             residents_id = random.choice(residents_ids)
+            admins_id = random.choice(admins_ids)
             
             alert_data = {
-            'resident_id': residents_id,
+            'resident': residents_id,
+            'admin': admins_id,
             'message': "test test test",
             'alert_type': random.choice(['fire', 'health', 'police']),
             "latitude": random.choice(['14.6538']),

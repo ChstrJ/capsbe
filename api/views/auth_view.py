@@ -33,7 +33,7 @@ class LoginView(APIView):
         user_details = UserSerializer(user)
         
         return response({
-            "user": user_details.data, 
+            **user_details.data, 
             "token": token.key
             }, 
             SUCCESS, 

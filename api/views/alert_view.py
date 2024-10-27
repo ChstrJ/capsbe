@@ -124,7 +124,6 @@ class SendEmailView(APIView):
         # The number should be verified in twilio dashboard
         no = '09477936940' #all_data['contact_number']
         convert = convert_to_639(no)
-        print(convert, message_sms)
         
         try: 
             #email.send_email(subject, message_email, all_data['user']['email'])

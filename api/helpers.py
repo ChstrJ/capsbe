@@ -28,10 +28,10 @@ def send_sms_response(all_data):
         response = f"Alert: Fire truck incoming on {all_data['address']}. Clear the way immediately and stay alert.\n" 
         response += f"Google Maps Link: {link}"
     elif all_data['alert_type'] == 'medical':
-        response = f"Alert: Medical assistance is on the way to {all_data['address']}. Please clear the area and allow emergency personnel to pass. Stay safe!" 
+        response = f"Alert: Medical assistance is on the way to {all_data['address']}. Please clear the area and allow emergency personnel to pass. Stay safe!\n" 
         response += f"Google Maps Link: {link}"
     elif all_data['alert_type'] == 'police':
-        response = f"Alert: Police are responding to an incident at {all_data['address']}. Please stay indoors and avoid the area for your safety."
+        response = f"Alert: Police are responding to an incident at {all_data['address']}. Please stay indoors and avoid the area for your safety.\n"
         response += f"Google Maps Link: {link}"
     else:
         response = f"Emergeton is on the way to {all_data['address']}. Please stay calm!"

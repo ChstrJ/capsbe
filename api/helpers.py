@@ -20,22 +20,29 @@ def now():
 def response(data = None, message = None, code = status.HTTP_200_OK):
     return Response(format_response(data, message), code)
 
-def send_sms_response(location, type):
-    response = ''
-    if type == 'fire':
-        response = f"Alert: Fire truck incoming on {location}. Clear the way immediately and stay alert." 
-    elif type == 'medical':
-        response = f"Alert: Medical assistance is on the way to {location}. Please clear the area and allow emergency personnel to pass. Stay safe!" 
-    elif type == 'police':
-        response = f"Alert: Police are responding to an incident at {location}. Please stay indoors and avoid the area for your safety."
+def send_sms_response(all_data):
+    
+    link = f"https://www.google.com/maps/place/{all_data['latitude']},{all_data['longitude']}"
+    
+    if all_data['alert_type'] == 'fire':
+        response = f"Alert: Fire truck incoming on {all_data['address']}. Clear the way immediately and stay alert.\n" 
+        response += f"Google Maps Link: {link}"
+    elif all_data['alert_type'] == 'medical':
+        response = f"Alert: Medical assistance is on the way to {all_data['address']}. Please clear the area and allow emergency personnel to pass. Stay safe!" 
+        response += f"Google Maps Link: {link}"
+    elif all_data['alert_type'] == 'police':
+        response = f"Alert: Police are responding to an incident at {all_data['address']}. Please stay indoors and avoid the area for your safety."
+        response += f"Google Maps Link: {link}"
     else:
-        response = f"Emergeton is on the way to {location}. Please stay calm!"
+        response = f"Emergeton is on the way to {all_data['address']}. Please stay calm!"
+        response += f"Google Maps Link: {link}"
+        
         
     return response
         
 
-def send_email_subject(type, landmark):
-    return f"🚨 {type.upper()} Emergency Alert 🚨: Urgent Response needed at {landmark}, Reported at {now()}"
+def send_email_subject(alert_data):
+    return f"🚨 {alert_data['alert_type'].upper()} Emergency Alert 🚨: Urgent Response needed at {alert_data['landmark']}, Reported at {now()}"
 
 # def send_email_message(address, department, type, number):
 #     # Initialize body as a single string
@@ -54,31 +61,31 @@ def send_email_subject(type, landmark):
 #     return body
  
  
-def send_email_message(user_details, resident_details, alert_details, department):
+def send_email_message(all_data):
     number = "09982373882"
     
-    if alert_details['alert_type'] == 'police':
+    if all_data['alert_type'] == 'police':
         custom = 'This is an emergency alert. Police assistance is urgently needed at the following location:'
-    elif alert_details['alert_type'] == 'health':
+    elif all_data['alert_type'] == 'health':
         custom = 'This is an emergency alert. An ambulance is urgently needed at the following location:'
-    elif alert_details['alert_type'] == 'fire':
+    elif all_data['alert_type'] == 'fire':
         custom = 'This is an emergency alert. Fire response is urgently needed at the following location:'
     
     body = f"""
     <html>
         <body>
-            <p><strong>To {department},</strong></p>
+            <p><strong>To {all_data['name']},</strong></p>
             
             <h3><strong><p>{custom}</p></strong><h3>
             
-            <h3><strong>📍 Location:</strong> {resident_details['address']}<br>
+            <h3><strong>📍 Location:</strong> {all_data['address']}<br>
             <strong>🕛 Date & Time:</strong> {now()}<br>
-            <strong>👤 First Name: {user_details['first_name']}</strong><br>
-            <strong>👤 Last Name: {user_details['last_name']}</strong><br>
-            <strong>📞 Contact number: {resident_details['contact_number']}</strong>
+            <strong>👤 First Name: {all_data['user']['first_name']}</strong><br>
+            <strong>👤 Last Name: {all_data['user']['last_name']}</strong><br>
+            <strong>📞 Contact number: {all_data['contact_number']}</strong>
             </h3>
             
-            <h3><a href="https://www.google.com/maps/place/{alert_details['latitude']},{alert_details['longitude']}">🗺️ Google Maps Link</a></h3>
+            <h3><a href="https://www.google.com/maps/place/{all_data['latitude']},{all_data['longitude']}">🗺️ Google Maps Link</a></h3>
             
             <p>Immediate assistance is required. Please respond as soon as possible. For any further information or updates, contact us at <strong>{number}</strong>.</p>
             

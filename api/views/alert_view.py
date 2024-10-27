@@ -2,6 +2,7 @@ from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
 from django.conf import settings
 from ..permissions import IsAdmin, IsResident
 from ..serializers.user_serializer import ResidentSerializer, UserSerializer
@@ -12,7 +13,6 @@ from ..helpers import response, convert_to_639, now, send_sms_response, send_ema
 from ..models import Alert, User, Resident, Department
 from ..services.twilio import TwilioService
 from ..services.email import EmailService
-import asyncio
 
 class ListAlertsView(APIView):
     permission_classes = [IsAdmin]
@@ -88,6 +88,10 @@ class SendEmailView(APIView):
         dept_id = request.data.get("department_id")
         alert_id = request.data.get("alert_id")
         
+        if not dept_id and not alert_id:
+            raise ValidationError({"error": "alert_id and department_id is required!"})
+            
+        
         #Alert Data 
         alert = Alert.objects.get(id=alert_id)
         alert_serializer = AlertSerializer(alert)
@@ -95,26 +99,36 @@ class SendEmailView(APIView):
         
         # Department Data
         dept = Department.objects.get(id=dept_id)
-        dept_serializer = DepartmentSerializer(dept)
+        dept_serializer = DepartmentSerializer(dept, data=request.data, partial=True)
+        dept_serializer.is_valid(raise_exception=True)
+        dept.status = 'dispatched'
+        dept.save()
         dept_data = dept_serializer.data
         
         # Residents Data
         resident = Resident.objects.get(id=alert_data['resident'])
         resident_serializer = ResidentSerializer(resident)
         resident_data = resident_serializer.data
-        
         user_data = resident_data.get('user')
         
-        all_data = {**user_data, **resident_data}
+        # Combine all data
+        all_data = {**user_data, **resident_data, **alert_data, **dept_data}
         
         email = EmailService()
+        twilio = TwilioService()
         
-        subject = send_email_subject(alert_data['alert_type'], resident_data['landmark'])
-        message = send_email_message(all_data['user'], all_data, alert_data, dept_data['name'])
-        to_email = "cheschesj2@gmail.com"
+        subject = send_email_subject(all_data)
+        message_email = send_email_message(all_data)
+        message_sms = send_sms_response(all_data)
+        
+        # The number should be verified in twilio dashboard
+        no = '09477936940' #all_data['contact_number']
+        convert = convert_to_639(no)
+        print(convert, message_sms)
         
         try: 
-            email.send_email(subject, message, to_email)
+            #email.send_email(subject, message_email, all_data['user']['email'])
+            twilio.send_sms(message_sms, receiver=convert)
             return response(True, SUCCESS, status.HTTP_200_OK)
         except Exception as e:
             return response(str(e), BAD_REQUEST, status.HTTP_400_BAD_REQUEST)

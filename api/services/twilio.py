@@ -12,11 +12,12 @@ class TwilioService():
         
     def send_sms(self, message, receiver, sender = settings.TWILIO_PHONE_NO):
         try:
-            self.client.messages.create(
+            sms = self.client.messages.create(
             from_=sender,
             to=receiver,
             body=message
             )
+            print(sms)
             return True
         except TwilioRestException as t:
             print(t.code, t.msg)

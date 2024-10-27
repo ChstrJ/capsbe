@@ -74,6 +74,19 @@ class CreateDepartmentView(APIView):
         
         return response(serializer.data, SUCCESS, status.HTTP_201_CREATED)
     
+class SetToAvailable(APIView):
+    permission_classes = [IsAdmin]
+    
+    def post(self, request, pk):
+        department = Department.objects.get(pk=pk)
+        serializer = DepartmentSerializer(department, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        department.status = 'available'
+        department.save()
+        
+        return response(True, SUCCESS, status.HTTP_200_OK)
+    
+    
 
 class UpdateDepartmentView(APIView):
     permission_classes = [IsAdmin]

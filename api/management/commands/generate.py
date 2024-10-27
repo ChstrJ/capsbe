@@ -92,8 +92,8 @@ class Command(BaseCommand):
             'admin': admins_id,
             'message': "test test test",
             'alert_type': random.choice(['fire', 'health', 'police']),
-            "latitude": random.choice(['14.6538']),
-            "longitude": random.choice(['120.9602']),
+            "latitude": random.choice(['14.6538', '14.6681', '14.6928', '14.6797', '14.6623']),
+            "longitude": random.choice(['120.9602', '120.9658', '120.9331', '120.9604', '120.9597']),
             }
             
             data.append(alert_data)

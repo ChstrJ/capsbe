@@ -23,7 +23,8 @@ from .views.department_view import (
     GetAvailableCountView,
     CreateDepartmentView,
     DeleteDepartmentView,
-    UpdateDepartmentView
+    UpdateDepartmentView,
+    SetToAvailable,
 )
 
 from .views.alert_view import (
@@ -57,6 +58,7 @@ urlpatterns = [
     path('departments/delete/<uuid:pk>', DeleteDepartmentView.as_view(), name='delete-department'), # delete
     path('departments/update/<uuid:pk>', UpdateDepartmentView.as_view(), name='update-department'), # put/patch
     path('departments/available-count', GetAvailableCountView.as_view(), name='get-available'), # get
+    path('departments/set-available/<uuid:pk>', SetToAvailable.as_view(), name='set-available'), # post
     
     path('alerts', ListAlertsView.as_view(), name='list-alert'), # get
     path('alerts/delete/<uuid:pk>', DeleteAlertView.as_view(), name='delete-alert'), # delete

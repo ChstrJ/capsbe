@@ -69,3 +69,5 @@ urlpatterns = [
     # not working yet
     path('send-email', SendEmailView.as_view(), name='send-sms'), # post
 ]
+
+#test

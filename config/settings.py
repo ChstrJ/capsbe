@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+import dj_database_url
 from pathlib import Path
 from dotenv import load_dotenv
 import os
@@ -120,6 +120,10 @@ DATABASES = {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
+    #'default'=dj_database_url.config(
+    #    default='postgresql://postgres:postgres@localhost:5432/mysite',
+    #    conn_max_age=600    
+    #)
 }
 
 

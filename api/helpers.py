@@ -20,78 +20,104 @@ def now():
 def response(data = None, message = None, code = status.HTTP_200_OK):
     return Response(format_response(data, message), code)
 
-def send_sms_response(all_data):
+def respond_sms_response(dispatch_data, user_data):
     
-    link = f"https://www.google.com/maps/place/{all_data['latitude']},{all_data['longitude']}"
+    if dispatch_data['alert_type'] == 'fire':
+        response = f"Alert: Fire truck incoming on {user_data['address']}. Clear the way immediately and stay alert.\n" 
+    elif dispatch_data['alert_type'] == 'medical':
+        response = f"Alert: Medical assistance is on the way to {user_data['address']}. Please clear the area and allow emergency personnel to pass. Stay safe!\n" 
+    elif dispatch_data['alert_type'] == 'police':
+        response = f"Alert: Police are responding to an incident at {user_data['address']}. Please stay indoors and avoid the area for your safety.\n"
+    else:
+        response = f"Emergeton is on the way to {user_data['address']}. Please stay calm!"
+        
+        
+    return response
+
+def send_sms_response(dispatch_data, user_data):
     
-    if all_data['alert_type'] == 'fire':
-        response = f"Alert: Fire truck incoming on {all_data['address']}. Clear the way immediately and stay alert.\n" 
+    link = f"https://www.google.com/maps/place/{dispatch_data['latitude']},{dispatch_data['longitude']}"
+    
+    if dispatch_data['alert_type'] == 'fire':
+        response = f"Alert: Fire truck needed at {user_data['address']}. Please respond immediately!\n" 
         response += f"Google Maps Link: {link}"
-    elif all_data['alert_type'] == 'medical':
-        response = f"Alert: Medical assistance is on the way to {all_data['address']}. Please clear the area and allow emergency personnel to pass. Stay safe!\n" 
+    elif dispatch_data['alert_type'] == 'medical':
+        response = f"Alert: Medical assistance is needed at {user_data['address']}. Please respond immediately!\n" 
         response += f"Google Maps Link: {link}"
-    elif all_data['alert_type'] == 'police':
-        response = f"Alert: Police are responding to an incident at {all_data['address']}. Please stay indoors and avoid the area for your safety.\n"
+    elif dispatch_data['alert_type'] == 'police':
+        response = f"Alert: Police are needed at {user_data['address']}. Please respond immediately!\n"
         response += f"Google Maps Link: {link}"
     else:
-        response = f"Emergeton is on the way to {all_data['address']}. Please stay calm!"
+        response = f"Emergeton is on the way to {user_data['address']}. Please respond immediately!"
         response += f"Google Maps Link: {link}"
         
         
     return response
-        
 
-def send_email_subject(alert_data):
-    return f"🚨 {alert_data['alert_type'].upper()} Emergency Alert 🚨: Urgent Response needed at {alert_data['landmark']}, Reported at {now()}"
+def send_email_subject(dispatch_data, user_data):
+    return f"🚨 {dispatch_data['alert_type'].upper()} Emergency Alert 🚨: Urgent Response needed at {user_data['landmark']}, Reported at {now()}"
 
-# def send_email_message(address, department, type, number):
-#     # Initialize body as a single string
-#     body = f"Dear {department},\n\n"
+def respond_email_subject(dispatch_data, user_data):
+    return f"🚨 {dispatch_data['alert_type'].upper()} Emergency Alert 🚨: Help is on the way! Please stay calm. Assistance is headed to your location near {user_data['landmark']}."
     
-#     body += f"This is an emergency alert. A {type} has been detected at the following location:\n"
-#     body += f"Location: {address}\n"
-#     body += f"Date & Time: {now()}\n\n"
-    
-#     body += f"Immediate assistance is required. Please respond as soon as possible. For any further information or updates, contact us at {number}.\n\n"
-    
-#     body += "Thank you for your prompt response.\n\n"
-#     body += "Best regards,\n"
-#     body += "Barangay Longos Official"
-    
-#     return body
- 
- 
-def send_email_message(all_data):
+def send_email_message(dispatch_data, user_data):
     number = "09982373882"
     
-    if all_data['alert_type'] == 'police':
+    if dispatch_data['alert_type'] == 'police':
         custom = 'This is an emergency alert. Police assistance is urgently needed at the following location:'
-    elif all_data['alert_type'] == 'health':
+    elif dispatch_data['alert_type'] == 'health':
         custom = 'This is an emergency alert. An ambulance is urgently needed at the following location:'
-    elif all_data['alert_type'] == 'fire':
+    elif dispatch_data['alert_type'] == 'fire':
         custom = 'This is an emergency alert. Fire response is urgently needed at the following location:'
     
     body = f"""
     <html>
         <body>
-            <p><strong>To {all_data['name']},</strong></p>
+            <p><strong>To {dispatch_data['name']},</strong></p>
             
             <h3><strong><p>{custom}</p></strong><h3>
             
-            <h3><strong>📍 Location:</strong> {all_data['address']}<br>
+            <h3><strong>📍 Location:</strong> {user_data['address']}<br>
             <strong>🕛 Date & Time:</strong> {now()}<br>
-            <strong>👤 First Name: {all_data['user']['first_name']}</strong><br>
-            <strong>👤 Last Name: {all_data['user']['last_name']}</strong><br>
-            <strong>📞 Contact number: {all_data['contact_number']}</strong>
+            <strong>👤 First Name: {user_data['user']['first_name']}</strong><br>
+            <strong>👤 Last Name: {user_data['user']['last_name']}</strong><br>
+            <strong>📞 Contact number: {user_data['contact_number']}</strong>
             </h3>
             
-            <h3><a href="https://www.google.com/maps/place/{all_data['latitude']},{all_data['longitude']}">🗺️ Google Maps Link</a></h3>
+            <h3><a href="https://www.google.com/maps/place/{dispatch_data['latitude']},{dispatch_data['longitude']}">🗺️ Google Maps Link</a></h3>
             
             <p>Immediate assistance is required. Please respond as soon as possible. For any further information or updates, contact us at <strong>{number}</strong>.</p>
             
             <p>Best regards,<br>
             Barangay Longos Official</p>
         </body>
+    </html>
+    """
+    
+    return body
+
+def respond_email_message(dispatch_data, user_data):
+    number = "09982373882"
+    
+    if dispatch_data['alert_type'] == 'police':
+        custom = 'Please stay alert. Police is coming on your way.'
+    elif dispatch_data['alert_type'] == 'health':
+        custom = 'Please stay alert. Medical assistance is coming on your way.'
+    elif dispatch_data['alert_type'] == 'fire':
+        custom = 'Please stay alert. Fire truck is coming on your way.'
+    
+    body = f"""
+    <html>
+        <body>
+        <p><strong>Dear {user_data['user']['first_name']} {user_data['user']['last_name']},</strong></p>
+        
+        <h3>{custom}</h3>
+        
+        <p>We kindly ask you to remain calm. Help is on the way to your location. For further information or updates, please don't hesitate to contact us at <strong>{number}</strong>.</p>
+        
+        <p>Warm regards,<br>
+        Barangay Longos Official</p>
+    </body>
     </html>
     """
     

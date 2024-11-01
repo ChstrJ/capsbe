@@ -9,7 +9,7 @@ from ..serializers.user_serializer import ResidentSerializer, UserSerializer
 from ..serializers.alert_serializer import AlertSerializer, SMSSerializer
 from ..serializers.department_serializer import DepartmentSerializer
 from ..messages import *
-from ..helpers import response, convert_to_639, now, send_sms_response, send_email_subject, send_email_message
+from ..helpers import response, convert_to_639, now, send_sms_response, send_email_subject, send_email_message, respond_email_message, respond_sms_response, respond_email_subject
 from ..models import Alert, User, Resident, Department
 from ..services.twilio import TwilioService
 from ..services.email import EmailService
@@ -112,22 +112,31 @@ class SendEmailView(APIView):
         user_data = resident_data.get('user')
         
         # Combine all data
-        all_data = {**user_data, **resident_data, **alert_data, **dept_data}
+        user_data = {**user_data, **resident_data}
+        dispatch_data = {**alert_data, **dept_data}
         
         email = EmailService()
         twilio = TwilioService()
         
-        subject = send_email_subject(all_data)
-        message_email = send_email_message(all_data)
-        message_sms = send_sms_response(all_data)
+        # Send to the department
+        message_sms = send_sms_response(dispatch_data, user_data)
+        subject = send_email_subject(dispatch_data, user_data)
+        message_email = send_email_message(dispatch_data, user_data)
+        
+        # Send to the residents
+        respond_sms = respond_sms_response(dispatch_data, user_data)
+        respond_subject = respond_email_subject(dispatch_data, user_data)
+        respond_message = respond_email_message(dispatch_data, user_data)
         
         # The number should be verified in twilio dashboard
-        no = '09477936940' #all_data['contact_number']
-        convert = convert_to_639(no)
+        department_no = '09477936940' #all_data['contact_number']
+        department_no = convert_to_639(department_no)
         
         try: 
-            #email.send_email(subject, message_email, all_data['user']['email'])
-            twilio.send_sms(message_sms, receiver=convert)
+            email.send_email(subject, message_email, dispatch_data['email'])
+            email.send_email(respond_subject, respond_message, user_data['user']['email'])
+            #twilio.send_sms(message_sms, receiver=convert)
+            #twilio.send_sms(respond_sms,)
             return response(True, SUCCESS, status.HTTP_200_OK)
         except Exception as e:
             return response(str(e), BAD_REQUEST, status.HTTP_400_BAD_REQUEST)

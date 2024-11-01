@@ -33,7 +33,7 @@ class Command(BaseCommand):
         for _ in range(count):
             Department.objects.create(
                 name=fake.name(),
-                email=fake.name(),
+                email=fake.email(),
                 tags=random.choice(['fire', 'health', 'police']),
                 contact_number='09477936942',
                 address=fake.address(),

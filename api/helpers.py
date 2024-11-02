@@ -23,11 +23,11 @@ def response(data = None, message = None, code = status.HTTP_200_OK):
 def respond_sms_response(dispatch_data, user_data):
     
     if dispatch_data['alert_type'] == 'fire':
-        response = f"EMERGENCY ALERT: Fire truck incoming on {user_data['address']}. Clear the way immediately and stay alert.\n" 
+        response = f"EMERGENCY ALERT: Fire truck incoming on {user_data['address']}. Clear the way immediately and stay alert." 
     elif dispatch_data['alert_type'] == 'medical':
-        response = f"EMERGENCY ALERT: Medical assistance is on the way to {user_data['address']}. Please clear the area and allow emergency personnel to pass. Stay safe!\n" 
+        response = f"EMERGENCY ALERT: Medical assistance is on the way to {user_data['address']}. Please clear the area and allow emergency personnel to pass. Stay safe!" 
     elif dispatch_data['alert_type'] == 'police':
-        response = f"EMERGENCY ALERT: Police are responding to an incident at {user_data['address']}. Please stay indoors and avoid the area for your safety.\n"
+        response = f"EMERGENCY ALERT: Police are responding to an incident at {user_data['address']}. Please stay indoors and avoid the area for your safety."
     else:
         response = f"Emergeton is on the way to {user_data['address']}. Please stay calm!"
         
@@ -38,13 +38,13 @@ def send_sms_response(dispatch_data, user_data):
     link = f"https://www.google.com/maps/place/{dispatch_data['latitude']},{dispatch_data['longitude']}"
     
     if dispatch_data['alert_type'] == 'fire':
-        response = f"EMERGENCY ALERT: Fire truck needed at {user_data['address']}. Please respond immediately!\n" 
+        response = f"EMERGENCY ALERT: Fire truck needed at {user_data['address']}. Please respond immediately!" 
         #response += f"Google Maps Link: {link}"
     elif dispatch_data['alert_type'] == 'medical':
-        response = f"EMERGENCY ALERT: Medical assistance is needed at {user_data['address']}. Please respond immediately!\n" 
+        response = f"EMERGENCY ALERT: Medical assistance is needed at {user_data['address']}. Please respond immediately!" 
         #response += f"Google Maps Link: {link}"
     elif dispatch_data['alert_type'] == 'police':
-        response = f"EMERGENCY ALERT: Police are needed at {user_data['address']}. Please respond immediately!\n"
+        response = f"EMERGENCY ALERT: Police are needed at {user_data['address']}. Please respond immediately!"
         #response += f"Google Maps Link: {link}"
     else:
         response = f"Emergeton is on the way to {user_data['address']}. Please respond immediately!"

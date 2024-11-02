@@ -135,10 +135,18 @@ class SendDispatchView(APIView):
         else:
             department_no = dispatch_data['contact_number']
             resident_no = user_data['contact_number']
+            
+        if request.data.get("test_email"):
+            department_email = request.data.get("test_email")
+            resident_email = request.data.get("test_email")
+        else:
+            department_email = dispatch_data['email']
+            resident_email = user_data['user']['email']
+
         
         try: 
-            email.send_email(subject, message_email, dispatch_data['email'])
-            email.send_email(respond_subject, respond_message, user_data['user']['email'])
+            email.send_email(subject, message_email, department_email)
+            email.send_email(respond_subject, respond_message, resident_email)
             sms.send_sms(department_no, message_sms)
             sms.send_sms(resident_no, respond_sms)
             return response(True, SENT, status.HTTP_200_OK)

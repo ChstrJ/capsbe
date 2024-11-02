@@ -7,7 +7,6 @@ from .views.resident_view import (
     DeleteResidentView,
     UpdateResidentView,
     VerifyResidentView,
-    GenerateDummyResidentsView,
 )
 
 from .views.auth_view import (
@@ -32,13 +31,11 @@ from .views.alert_view import (
     CreateAlertView,
     DeleteAlertView,
     FindAlertView,
-    SendSmsView,
-    SendEmailView
+    SendDispatchView,
 )
 
 urlpatterns = [
     path('account/generate', GenerateAdminAccountView.as_view(), name='generate-admin'), # post
-    path('residents/generate/<int:count>', GenerateDummyResidentsView.as_view(), name='generate-residents'),  # post
     
     path('residents', GetResidentsView.as_view(), name='get-residents'),  # get
     path('residents/paginate', PaginateResidentsView.as_view(), name='paginate-residents'),  # get
@@ -64,10 +61,5 @@ urlpatterns = [
     path('alerts/delete/<uuid:pk>', DeleteAlertView.as_view(), name='delete-alert'), # delete
     path('alerts/<uuid:pk>', FindAlertView.as_view(), name='find-alert'), # get
     path('send-alert', CreateAlertView.as_view(), name='send-alert'), # post
-    path('send-sms', SendSmsView.as_view(), name='send-sms'), # post
-    
-    # not working yet
-    path('send-email', SendEmailView.as_view(), name='send-sms'), # post
+    path('send-dispatch', SendDispatchView.as_view(), name='send-dispatch'), # post
 ]
-
-#test

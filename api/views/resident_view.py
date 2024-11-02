@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from ..serializers.user_serializer import ResidentSerializer
 from ..messages import *
-from ..helpers import response, create_dummy_residents
+from ..helpers import response
 from ..models import Resident, User
 from ..permissions import IsAdmin
 
@@ -138,17 +138,3 @@ class VerifyResidentView(APIView):
         
         return response("Verified", SUCCESS, status.HTTP_200_OK)
     
-    
-class GenerateDummyResidentsView(APIView):
-    permission_classes = [AllowAny]
-    
-    def post(self, request, count):
-        
-        residents_data = create_dummy_residents(count)
-        
-        for resident in residents_data:
-            serializer = ResidentSerializer(data=resident)
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        
-        return response(True, SUCCESS, status.HTTP_200_OK)

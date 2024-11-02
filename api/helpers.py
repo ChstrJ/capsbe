@@ -23,14 +23,13 @@ def response(data = None, message = None, code = status.HTTP_200_OK):
 def respond_sms_response(dispatch_data, user_data):
     
     if dispatch_data['alert_type'] == 'fire':
-        response = f"Alert: Fire truck incoming on {user_data['address']}. Clear the way immediately and stay alert.\n" 
+        response = f"EMERGENCY ALERT: Fire truck incoming on {user_data['address']}. Clear the way immediately and stay alert.\n" 
     elif dispatch_data['alert_type'] == 'medical':
-        response = f"Alert: Medical assistance is on the way to {user_data['address']}. Please clear the area and allow emergency personnel to pass. Stay safe!\n" 
+        response = f"EMERGENCY ALERT: Medical assistance is on the way to {user_data['address']}. Please clear the area and allow emergency personnel to pass. Stay safe!\n" 
     elif dispatch_data['alert_type'] == 'police':
-        response = f"Alert: Police are responding to an incident at {user_data['address']}. Please stay indoors and avoid the area for your safety.\n"
+        response = f"EMERGENCY ALERT: Police are responding to an incident at {user_data['address']}. Please stay indoors and avoid the area for your safety.\n"
     else:
         response = f"Emergeton is on the way to {user_data['address']}. Please stay calm!"
-        
         
     return response
 
@@ -39,14 +38,14 @@ def send_sms_response(dispatch_data, user_data):
     link = f"https://www.google.com/maps/place/{dispatch_data['latitude']},{dispatch_data['longitude']}"
     
     if dispatch_data['alert_type'] == 'fire':
-        response = f"Alert: Fire truck needed at {user_data['address']}. Please respond immediately!\n" 
-        response += f"Google Maps Link: {link}"
+        response = f"EMERGENCY ALERT: Fire truck needed at {user_data['address']}. Please respond immediately!\n" 
+        #response += f"Google Maps Link: {link}"
     elif dispatch_data['alert_type'] == 'medical':
-        response = f"Alert: Medical assistance is needed at {user_data['address']}. Please respond immediately!\n" 
-        response += f"Google Maps Link: {link}"
+        response = f"EMERGENCY ALERT: Medical assistance is needed at {user_data['address']}. Please respond immediately!\n" 
+        #response += f"Google Maps Link: {link}"
     elif dispatch_data['alert_type'] == 'police':
-        response = f"Alert: Police are needed at {user_data['address']}. Please respond immediately!\n"
-        response += f"Google Maps Link: {link}"
+        response = f"EMERGENCY ALERT: Police are needed at {user_data['address']}. Please respond immediately!\n"
+        #response += f"Google Maps Link: {link}"
     else:
         response = f"Emergeton is on the way to {user_data['address']}. Please respond immediately!"
         response += f"Google Maps Link: {link}"
@@ -55,10 +54,10 @@ def send_sms_response(dispatch_data, user_data):
     return response
 
 def send_email_subject(dispatch_data, user_data):
-    return f"🚨 {dispatch_data['alert_type'].upper()} Emergency Alert 🚨: Urgent Response needed at {user_data['landmark']}, Reported at {now()}"
+    return f"🚨 {dispatch_data['alert_type'].upper()} EMERGENCY ALERT 🚨: Urgent Response needed at {user_data['landmark']}, Reported at {now()}"
 
 def respond_email_subject(dispatch_data, user_data):
-    return f"🚨 {dispatch_data['alert_type'].upper()} Emergency Alert 🚨: Help is on the way! Please stay calm. Assistance is headed to your location near {user_data['landmark']}."
+    return f"🚨 {dispatch_data['alert_type'].upper()} EMERGENCY ALERT 🚨: Help is on the way! Please stay calm. Assistance is headed to your location near {user_data['landmark']}."
     
 def send_email_message(dispatch_data, user_data):
     number = "09982373882"
@@ -129,36 +128,3 @@ def convert_to_639(number):
         return 
     
     return f"+639{number[2:]}"
-
-
-def create_dummy_residents(count = 10):
-    fake = Faker()
-    data = []
-    
-    for _ in range(count):
-        
-        user_data = {
-              "user": {
-                "first_name": fake.first_name(),
-                "last_name": fake.last_name(),
-                "email": fake.email(),
-                "password": fake.password(),
-              }
-        }
-
-        resident_data = {
-            "contact_number": "09477936942",
-            "address": fake.address(),
-            "verified": False, 
-            "landmark": fake.street_name(),
-        }
-        
-        residents = {
-            **user_data, 
-            **resident_data
-        }
-        
-        data.append(residents)
-        
-        
-    return data

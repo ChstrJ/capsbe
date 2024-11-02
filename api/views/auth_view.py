@@ -8,7 +8,7 @@ from django.db import IntegrityError
 from ..serializers.user_serializer import UserSerializer, ResidentSerializer, AdminSerializer, LoginSerializer
 from ..messages import *
 from ..helpers import response
-from ..models import User
+from ..models import User, Resident
  
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -32,14 +32,22 @@ class LoginView(APIView):
         token, created = Token.objects.get_or_create(user=user)
         user_details = UserSerializer(user)
         
+        if user_details.data['user_type'] == 'resident':
+            resident_id = user_details.data['id']
+            resident = Resident.objects.get(user_id=resident_id)
+            resident = ResidentSerializer(resident)
+            
+            if not resident.data['verified']:
+                return response("You are not verified. Please contact your barangay official to get verified.", PERMISSION_DENIED, status.HTTP_403_FORBIDDEN)
+            
+        
         return response({
-            **user_details.data, 
+            **user_details.data,
             "token": token.key
             }, 
             SUCCESS, 
             status.HTTP_200_OK)
         
-
 class ResidentRegisterView(APIView):
     permission_classes = [AllowAny]
     

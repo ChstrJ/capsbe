@@ -13,6 +13,7 @@ from ..helpers import response, convert_to_639, now, send_sms_response, send_ema
 from ..models import Alert, User, Resident, Department
 from ..services.twilio import TwilioService
 from ..services.email import EmailService
+from ..services.sms import SMSService
 
 class ListAlertsView(APIView):
     permission_classes = [IsAdmin]
@@ -80,7 +81,7 @@ class SendSmsView(APIView):
         except Exception as e:
             return response(False, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
     
-class SendEmailView(APIView):
+class SendDispatchView(APIView):
     permission_classes = [IsAdmin]
     
     def post(self, request):
@@ -116,7 +117,7 @@ class SendEmailView(APIView):
         dispatch_data = {**alert_data, **dept_data}
         
         email = EmailService()
-        twilio = TwilioService()
+        sms = SMSService()
         
         # Send to the department
         message_sms = send_sms_response(dispatch_data, user_data)
@@ -128,16 +129,19 @@ class SendEmailView(APIView):
         respond_subject = respond_email_subject(dispatch_data, user_data)
         respond_message = respond_email_message(dispatch_data, user_data)
         
-        # The number should be verified in twilio dashboard
-        department_no = '09477936940' #all_data['contact_number']
-        department_no = convert_to_639(department_no)
+        if request.data.get("test_no"):
+            department_no = request.data.get("test_no")
+            resident_no = request.data.get("test_no")
+        else:
+            department_no = dispatch_data['contact_number']
+            resident_no = user_data['contact_number']
         
         try: 
             email.send_email(subject, message_email, dispatch_data['email'])
             email.send_email(respond_subject, respond_message, user_data['user']['email'])
-            #twilio.send_sms(message_sms, receiver=convert)
-            #twilio.send_sms(respond_sms,)
-            return response(True, SUCCESS, status.HTTP_200_OK)
+            sms.send_sms(department_no, message_sms)
+            sms.send_sms(resident_no, respond_sms)
+            return response(True, SENT, status.HTTP_200_OK)
         except Exception as e:
             return response(str(e), BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
         

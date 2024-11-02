@@ -13,3 +13,5 @@ SERVICE_UNAVAILABLE = "The service is currently unavailable. Please try again la
 LOGIN_REQUIRED = "Username and password are required."
 INVALID_CREDENTIALS = "Invalid credentials"
 EXISTS = "The requested resource already exists"
+PERMISSION_DENIED = "You are not authorized to access this resource."
+SENT = "SMS/EMAIL Sent Sucessfully!"

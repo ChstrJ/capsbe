@@ -26,6 +26,7 @@ class GetResidentsView(APIView):
                 "last_name": user_data.get('last_name'),
                 "email": user_data.get('email'),
                 "user_type": user_data.get('user_type'),
+                "verified": user_data.get('verified'),
                 "contact_number": resident_data.get('contact_number'),
                 "address": resident_data.get('address'),
                 "landmark": resident_data.get('landmark'),

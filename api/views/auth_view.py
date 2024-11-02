@@ -32,17 +32,23 @@ class LoginView(APIView):
         token, created = Token.objects.get_or_create(user=user)
         user_details = UserSerializer(user)
         
+        
+        data = user_details.data
+        
         if user_details.data['user_type'] == 'resident':
             resident_id = user_details.data['id']
             resident = Resident.objects.get(user_id=resident_id)
             resident = ResidentSerializer(resident)
+            data = resident.data
             
             if not resident.data['verified']:
                 return response("You are not verified. Please contact your barangay official to get verified.", PERMISSION_DENIED, status.HTTP_403_FORBIDDEN)
-            
+        
+        
+        
         
         return response({
-            **user_details.data,
+            **data,
             "token": token.key
             }, 
             SUCCESS, 

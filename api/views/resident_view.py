@@ -21,7 +21,7 @@ class GetResidentsView(APIView):
             user_data = resident_data.get('user')
             
             formatted_data = {
-                "id": resident_data.get('id'),
+                "id": user_data.get('id'),
                 "first_name": user_data.get('first_name'),
                 "last_name": user_data.get('last_name'),
                 "email": user_data.get('email'),
@@ -30,8 +30,8 @@ class GetResidentsView(APIView):
                 "contact_number": resident_data.get('contact_number'),
                 "address": resident_data.get('address'),
                 "landmark": resident_data.get('landmark'),
-                "created_at": resident_data.get('created_at'),
-                "updated_at": resident_data.get('updated_at'),
+                "created_at": user_data.get('created_at'),
+                "updated_at": user_data.get('updated_at'),
             }
             
             response_data.append(formatted_data)

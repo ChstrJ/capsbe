@@ -15,7 +15,7 @@ class GetDepartmentsView(APIView):
     permission_classes = [IsAdmin]
     
     def get(self, request):
-        departments = Department.objects.all().order_by('created_at')
+        departments = Department.objects.all().order_by('-created_at', '-updated_at')
         serializer = DepartmentSerializer(departments, many=True)
         return response(serializer.data, SUCCESS, status.HTTP_200_OK)
     

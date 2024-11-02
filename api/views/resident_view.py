@@ -11,7 +11,7 @@ from ..permissions import IsAdmin
 class GetResidentsView(APIView):
     permission_classes = [IsAdmin]
     def get(self, request):
-        data = Resident.objects.all().order_by('created_at')
+        data = Resident.objects.all().order_by('-created_at', '-updated_at')
         serializer = ResidentSerializer(data, many=True)
         
         response_data = []

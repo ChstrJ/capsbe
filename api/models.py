@@ -34,7 +34,7 @@ class Admin(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.id
+        return f"{self.id}"
 
 class Resident(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -47,7 +47,7 @@ class Resident(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return f"ID: {self.id}"
+        return f"{self.id}"
 
 class Alert(models.Model):
     
@@ -68,7 +68,7 @@ class Alert(models.Model):
     updated_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
-        return self.id
+        return f"{self.id}"
 
 class Department(models.Model):
 

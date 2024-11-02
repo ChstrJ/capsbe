@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.hashers import make_password
 from .validator import must_contains_letters, letters_only, numbers_only, format_09
-from ..models import Alert
+from ..models import Alert, Resident
 
 class AlertSerializer(serializers.ModelSerializer):
     
@@ -10,7 +10,11 @@ class AlertSerializer(serializers.ModelSerializer):
     ('health', 'Health'),
     ('police', 'Police')
     )
-
+    
+    resident = serializers.UUIDField()
+    
+    admin = serializers.UUIDField(required=False)
+    
     message = serializers.CharField(
         min_length=3,
         required=True,
@@ -49,7 +53,7 @@ class AlertSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alert
         fields = '__all__'
- 
+        
 
 class SMSSerializer(serializers.Serializer):
     

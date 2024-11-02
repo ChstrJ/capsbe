@@ -1,7 +1,7 @@
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import ValidationError
 from django.conf import settings
 from ..permissions import IsAdmin, IsResident
@@ -19,7 +19,7 @@ class ListAlertsView(APIView):
     permission_classes = [IsAdmin]
     
     def get(self, request):
-        alerts = Alert.objects.all()
+        alerts = Alert.objects.all().order_by('-created_at', '-updated_at')
         serializer = AlertSerializer(alerts, many=True)
         return response(serializer.data, SUCCESS, status.HTTP_200_OK)
     
@@ -52,7 +52,7 @@ class CreateAlertView(APIView):
         
         alert_data = {
             **request.data,
-            'resident_id': resident.id,
+            'resident': resident.id,
         }
         
         serializer = AlertSerializer(data=alert_data)
@@ -89,13 +89,15 @@ class SendDispatchView(APIView):
         dept_id = request.data.get("department_id")
         alert_id = request.data.get("alert_id")
         
-        if not dept_id and not alert_id:
+        if not dept_id or not alert_id:
             raise ValidationError({"error": "alert_id and department_id is required!"})
             
         
         #Alert Data 
         alert = Alert.objects.get(id=alert_id)
         alert_serializer = AlertSerializer(alert)
+        alert.admin = request.user.admins
+        alert.save()
         alert_data = alert_serializer.data
         
         # Department Data

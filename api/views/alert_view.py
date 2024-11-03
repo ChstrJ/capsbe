@@ -1,16 +1,14 @@
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.exceptions import ValidationError
 from django.conf import settings
 from ..permissions import IsAdmin, IsResident
-from ..serializers.user_serializer import ResidentSerializer, UserSerializer
+from ..serializers.user_serializer import ResidentSerializer
 from ..serializers.alert_serializer import AlertSerializer, SMSSerializer
 from ..serializers.department_serializer import DepartmentSerializer
 from ..messages import *
-from ..helpers import response, convert_to_639, now, send_sms_response, send_email_subject, send_email_message, respond_email_message, respond_sms_response, respond_email_subject
-from ..models import Alert, User, Resident, Department
+from ..helpers import response, convert_to_639, send_sms_response, send_email_subject, send_email_message, respond_email_message, respond_sms_response, respond_email_subject
+from ..models import Alert, Resident, Department
 from ..services.twilio import TwilioService
 from ..services.email import EmailService
 from ..services.sms import SMSService
@@ -92,27 +90,29 @@ class SendDispatchView(APIView):
         if not dept_id or not alert_id:
             raise ValidationError({"error": "alert_id and department_id is required!"})
             
-        
+        try:
         #Alert Data 
-        alert = Alert.objects.get(id=alert_id)
-        alert_serializer = AlertSerializer(alert)
-        alert.admin = request.user.admins
-        alert.save()
-        alert_data = alert_serializer.data
-        
-        # Department Data
-        dept = Department.objects.get(id=dept_id)
-        dept_serializer = DepartmentSerializer(dept, data=request.data, partial=True)
-        dept_serializer.is_valid(raise_exception=True)
-        dept.status = 'dispatched'
-        dept.save()
-        dept_data = dept_serializer.data
-        
-        # Residents Data
-        resident = Resident.objects.get(id=alert_data['resident'])
-        resident_serializer = ResidentSerializer(resident)
-        resident_data = resident_serializer.data
-        user_data = resident_data.get('user')
+            alert = Alert.objects.get(id=alert_id)
+            alert_serializer = AlertSerializer(alert)
+            alert.admin = request.user.admins
+            alert.save()
+            alert_data = alert_serializer.data
+            
+            # Department Data
+            dept = Department.objects.get(id=dept_id)
+            dept_serializer = DepartmentSerializer(dept, data=request.data, partial=True)
+            dept_serializer.is_valid(raise_exception=True)
+            dept.status = 'dispatched'
+            dept.save()
+            dept_data = dept_serializer.data
+            
+            # Residents Data
+            resident = Resident.objects.get(id=alert_data['resident'])
+            resident_serializer = ResidentSerializer(resident)
+            resident_data = resident_serializer.data
+            user_data = resident_data.get('user')
+        except Exception as e:
+            return response("Invalid Alert ID or Department ID", NOT_FOUND, status.HTTP_404_NOT_FOUND)
         
         # Combine all data
         user_data = {**user_data, **resident_data}

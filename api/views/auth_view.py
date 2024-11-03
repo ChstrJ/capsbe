@@ -1,5 +1,3 @@
-from rest_framework.decorators import api_view
-from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.permissions import AllowAny
@@ -32,20 +30,33 @@ class LoginView(APIView):
         token, created = Token.objects.get_or_create(user=user)
         user_details = UserSerializer(user)
         
-        
         data = user_details.data
         
         if user_details.data['user_type'] == 'resident':
             resident_id = user_details.data['id']
             resident = Resident.objects.get(user_id=resident_id)
             resident = ResidentSerializer(resident)
-            data = resident.data
             
+            resident_data = resident.data
+            
+            formatted_data = {
+                "id": resident_data.get('id'),
+                "first_name": data.get('first_name'),
+                "last_name": data.get('last_name'),
+                "email": data.get('email'),
+                "user_type": data.get('user_type'),
+                "verified": resident_data.get('verified'),
+                "contact_number": resident_data.get('contact_number'),
+                "address": resident_data.get('address'),
+                "landmark": resident_data.get('landmark'),
+                "created_at": data.get('created_at'),
+                "updated_at": data.get('updated_at'),
+            }
+            
+            data = formatted_data
+
             if not resident.data['verified']:
                 return response("You are not verified. Please contact your barangay official to get verified.", PERMISSION_DENIED, status.HTTP_403_FORBIDDEN)
-        
-        
-        
         
         return response({
             **data,
@@ -102,8 +113,7 @@ class ResidentRegisterView(APIView):
             return response(str(e), EXISTS, status.HTTP_400_BAD_REQUEST)
         
         return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
-        
-        
+                
 class AdminRegisterView(APIView):
     permission_classes = [AllowAny]
     
@@ -140,7 +150,6 @@ class AdminRegisterView(APIView):
         
         return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
         
-        
 class GenerateAdminAccountView(APIView):
     permission_classes = [AllowAny]
     
@@ -162,5 +171,3 @@ class GenerateAdminAccountView(APIView):
             return response(False, EXISTS, status.HTTP_400_BAD_REQUEST)
         
         return response("Success!", SUCCESS, status.HTTP_200_OK)
-    
-    

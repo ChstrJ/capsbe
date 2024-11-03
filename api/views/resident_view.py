@@ -1,11 +1,10 @@
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
 from ..serializers.user_serializer import ResidentSerializer
 from ..messages import *
 from ..helpers import response
-from ..models import Resident, User
+from ..models import Resident
 from ..permissions import IsAdmin
 
 class GetResidentsView(APIView):
@@ -21,7 +20,7 @@ class GetResidentsView(APIView):
             user_data = resident_data.get('user')
             
             formatted_data = {
-                "id": user_data.get('id'),
+                "id": resident_data.get('id'),
                 "first_name": user_data.get('first_name'),
                 "last_name": user_data.get('last_name'),
                 "email": user_data.get('email'),
@@ -51,7 +50,7 @@ class FindResidentView(APIView):
     permission_classes = [IsAdmin]
     def get(self, request, pk):
         try:
-            resident = Resident.objects.get(user_id=pk)
+            resident = Resident.objects.get(id=pk)
         except Resident.DoesNotExist:
             return response(False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
         
@@ -62,7 +61,7 @@ class FindResidentView(APIView):
         data = resident_data.get('user')
         
         response_data = {
-                "id": data['id'],
+                "id": resident_data['id'],
                 "first_name": data['first_name'],
                 "last_name": data['last_name'],
                 "verified": resident_data['verified'],
@@ -94,7 +93,7 @@ class DeleteResidentView(APIView):
     permission_classes = [IsAdmin]
     def delete(self, request, pk):
         try:
-            resident = Resident.objects.get(user_id=pk)
+            resident = Resident.objects.get(id=pk)
             resident.delete()
             return response(True, DELETED, status.HTTP_200_OK)
         except Resident.DoesNotExist:
@@ -104,7 +103,7 @@ class UpdateResidentView(APIView):
     permission_classes = [IsAdmin]
     def put(self, request, pk):
         try:
-            resident = Resident.objects.get(user_id=pk)
+            resident = Resident.objects.get(id=pk)
             serializer = ResidentSerializer(resident, data=request.data, partial=False)
             if serializer.is_valid():
                 serializer.save()
@@ -114,7 +113,7 @@ class UpdateResidentView(APIView):
 
     def patch(self, request, pk):
         try:
-            resident = Resident.objects.get(user_id=pk)
+            resident = Resident.objects.get(id=pk)
             serializer = ResidentSerializer(resident, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
@@ -128,7 +127,7 @@ class VerifyResidentView(APIView):
     
     def patch(self, request, pk):
         try:
-            resident = Resident.objects.get(user_id=pk)
+            resident = Resident.objects.get(id=pk)
         except Resident.DoesNotExist:
             return response (False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
         

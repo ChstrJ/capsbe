@@ -6,9 +6,10 @@ from .models import Resident
 from faker import Faker
 from datetime import datetime
 
-def format_response(data, message):
+def format_response(data, message, code):
         
     return {
+        'code': code,
         'message': message,
         'timestamp': int(timezone.now().timestamp()),
         'data': data
@@ -17,8 +18,14 @@ def format_response(data, message):
 def now():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-def response(data = None, message = None, code = status.HTTP_200_OK):
-    return Response(format_response(data, message), code)
+def response(data, message, status, code = None):
+    
+    if status == 200:
+        code = "success"
+    elif status >= 400 or status <= 500:
+        code = "error"
+    
+    return Response(format_response(data, message, code), status)
 
 def respond_sms_response(dispatch_data, user_data):
     

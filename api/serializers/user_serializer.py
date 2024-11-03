@@ -24,18 +24,6 @@ class UserSerializer(serializers.ModelSerializer):
         }
     )
     
-    # username = serializers.CharField(
-    #     required=True,
-    #     max_length=50,
-    #     min_length=3,
-    #     error_messages={
-    #         'blank': 'Username is required.',
-    #         'min_length': 'Minimum of 3 characters.',
-    #         'max_length': 'Maximum of 50 characters.',
-
-    #     }
-    # )
-    
     email = serializers.EmailField(
         required=True,
         error_messages={
@@ -135,7 +123,7 @@ class ResidentSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Resident
-        fields = ["user", "verified", "contact_number", "address", "landmark"]
+        fields = ["id", "user", "verified", "contact_number", "address", "landmark"]
         
 
 class LoginSerializer(serializers.Serializer):

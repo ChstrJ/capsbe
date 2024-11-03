@@ -3,12 +3,12 @@ from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 from django.conf import settings
 from ..permissions import IsAdmin, IsResident
-from ..serializers.user_serializer import ResidentSerializer
+from ..serializers.user_serializer import ResidentSerializer, UserSerializer
 from ..serializers.alert_serializer import AlertSerializer, SMSSerializer
 from ..serializers.department_serializer import DepartmentSerializer
 from ..messages import *
 from ..helpers import response, convert_to_639, send_sms_response, send_email_subject, send_email_message, respond_email_message, respond_sms_response, respond_email_subject
-from ..models import Alert, Resident, Department
+from ..models import Alert, Resident, Department, User
 from ..services.twilio import TwilioService
 from ..services.email import EmailService
 from ..services.sms import SMSService
@@ -19,7 +19,36 @@ class ListAlertsView(APIView):
     def get(self, request):
         alerts = Alert.objects.all().order_by('-created_at', '-updated_at')
         serializer = AlertSerializer(alerts, many=True)
-        return response(serializer.data, SUCCESS, status.HTTP_200_OK)
+        
+        data = []
+        
+        for alerts_data in serializer.data:
+            
+            alerts = alerts_data
+            
+            resident_data = Resident.objects.get(id=alerts['resident'])
+            
+            resident_data = ResidentSerializer(resident_data)
+            resident_data = resident_data.data
+            
+            user_data = resident_data.get('user')
+            
+            formatted_data = {
+                "id": alerts.get('id'),
+                "latitude": alerts.get('latitude'),
+                "longitude": alerts.get('longitude'),
+                "first_name": user_data.get('first_name'),
+                "last_name": user_data.get('last_name'),
+                "address": resident_data.get('address'),
+                "landmark": resident_data.get('landmark'),
+                "created_at": user_data.get('created_at'),
+                "updated_at": user_data.get('updated_at'),
+            }
+            
+            data.append(formatted_data)
+        
+        
+        return response(data, SUCCESS, status.HTTP_200_OK)
     
 class FindAlertView(APIView):
     permission_classes = [IsAdmin]

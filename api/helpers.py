@@ -45,13 +45,13 @@ def send_sms_response(dispatch_data, user_data):
     link = f"https://www.google.com/maps/place/{dispatch_data['latitude']},{dispatch_data['longitude']}"
     
     if dispatch_data['alert_type'] == 'fire':
-        response = f"EMERGENCY ALERT: Fire truck needed at {user_data['address']}. Please respond immediately!" 
+        response = f"FIRE EMERGENCY ALERT: Fire truck needed at {user_data['address']}. Please respond immediately!" 
         #response += f"Google Maps Link: {link}"
     elif dispatch_data['alert_type'] == 'medical':
-        response = f"EMERGENCY ALERT: Medical assistance is needed at {user_data['address']}. Please respond immediately!" 
+        response = f"MEDICAL EMERGENCY ALERT: Medical assistance is needed at {user_data['address']}. Please respond immediately!" 
         #response += f"Google Maps Link: {link}"
     elif dispatch_data['alert_type'] == 'police':
-        response = f"EMERGENCY ALERT: Police are needed at {user_data['address']}. Please respond immediately!"
+        response = f"POLICE EMERGENCY ALERT: Police are needed at {user_data['address']}. Please respond immediately!"
         #response += f"Google Maps Link: {link}"
     else:
         response = f"Emergeton is on the way to {user_data['address']}. Please respond immediately!"

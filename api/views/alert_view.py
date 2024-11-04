@@ -177,8 +177,7 @@ class SendDispatchView(APIView):
         else:
             department_email = dispatch_data['email']
             resident_email = user_data['user']['email']
-
-        
+            
         try: 
             email.send_email(subject, message_email, department_email)
             email.send_email(respond_subject, respond_message, resident_email)

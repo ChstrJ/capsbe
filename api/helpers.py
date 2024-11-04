@@ -20,7 +20,7 @@ def now():
 
 def response(data, message, status, code = None):
     
-    if status == 200:
+    if status >= 200 or status <= 300:
         code = "success"
     elif status >= 400 or status <= 500:
         code = "error"
@@ -30,11 +30,11 @@ def response(data, message, status, code = None):
 def respond_sms_response(dispatch_data, user_data):
     
     if dispatch_data['alert_type'] == 'fire':
-        response = f"EMERGENCY ALERT: Fire truck incoming on {user_data['address']}. Clear the way immediately and stay alert." 
+        response = f"FIRE EMERGENCY ALERT: Dear Resident {user_data['first_name']} {user_data['last_name']}, a fire truck is en route to {user_data['address']}. Please clear the way immediately and stay alert for further instructions." 
     elif dispatch_data['alert_type'] == 'medical':
-        response = f"EMERGENCY ALERT: Medical assistance is on the way to {user_data['address']}. Please clear the area and allow emergency personnel to pass. Stay safe!" 
+        response = f"MEDICAL EMERGENCY ALERT: Dear {user_data['first_name']} {user_data['last_name']}, an emergency medical team is on the way to {user_data['address']}. Please remain calm and prepare to provide any necessary assistance."
     elif dispatch_data['alert_type'] == 'police':
-        response = f"EMERGENCY ALERT: Police are responding to an incident at {user_data['address']}. Please stay indoors and avoid the area for your safety."
+        response = f"POLICE EMERGENCY ALERT: Dear {user_data['first_name']} {user_data['last_name']}, a police unit is en route to {user_data['address']}. Please stay inside and await further instructions."
     else:
         response = f"Emergeton is on the way to {user_data['address']}. Please stay calm!"
         

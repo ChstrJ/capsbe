@@ -35,6 +35,8 @@ class ListAlertsView(APIView):
             
             formatted_data = {
                 "id": alerts.get('id'),
+                "resident": alerts.get('resident'),
+                "admin": alerts.get('admin'),
                 "alert_type": alerts.get('alert_type'),
                 "message": alerts.get('message'),
                 "latitude": alerts.get('latitude'),

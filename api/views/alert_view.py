@@ -13,6 +13,20 @@ from ..services.twilio import TwilioService
 from ..services.email import EmailService
 from ..services.sms import SMSService
 
+class CheckAlertActivity(APIView):
+    permission_classes = [IsResident]
+
+    def get(self, request):
+        try:
+            user_id = request.user.id
+            alert = Alert.objects.filter(resident=user_id).filter(alert_status__in=['ongoing', 'pending']).first()
+        except Exception as e:
+            return response(False, ERROR, status.HTTP_400_BAD_REQUEST)
+
+        serializer = AlertSerializer(alert)
+
+        return response(serializer.data, SUCCESS, status.HTTP_200_OK)
+
 class ListAlertsView(APIView):
     permission_classes = [IsAdmin]
     

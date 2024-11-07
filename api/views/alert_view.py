@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 from django.conf import settings
 from ..permissions import IsAdmin, IsResident
 from ..serializers.user_serializer import ResidentSerializer, UserSerializer
-from ..serializers.alert_serializer import AlertSerializer, SMSSerializer
+from ..serializers.alert_serializer import AlertSerializer, SMSSerializer, UpdateAlertStatusSerializer
 from ..serializers.department_serializer import DepartmentSerializer
 from ..messages import *
 from ..helpers import response, convert_to_639, send_sms_response, send_email_subject, send_email_message, respond_email_message, respond_sms_response, respond_email_subject
@@ -12,6 +12,23 @@ from ..models import Alert, Resident, Department, User
 from ..services.twilio import TwilioService
 from ..services.email import EmailService
 from ..services.sms import SMSService
+
+class CheckAlertActivityView(APIView):
+    permission_classes = [IsResident]
+    
+    def get(self, request):
+        user_id = request.user.residents
+        
+        alert = Alert.objects.filter(
+            resident=user_id, 
+            alert_status__in=['ongoing', 'pending']
+        ).first()
+        
+        if not alert:
+            return response(False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
+        
+        serializer = AlertSerializer(alert)
+        return response({"alert_status": serializer.data['alert_status']}, SUCCESS, status.HTTP_200_OK)
 
 class ListAlertsView(APIView):
     permission_classes = [IsAdmin]
@@ -38,6 +55,7 @@ class ListAlertsView(APIView):
                 "resident": alerts.get('resident'),
                 "admin": alerts.get('admin'),
                 "alert_type": alerts.get('alert_type'),
+                "alert_status": alerts.get('alert_status'),
                 "message": alerts.get('message'),
                 "latitude": alerts.get('latitude'),
                 "longitude": alerts.get('longitude'),
@@ -53,6 +71,22 @@ class ListAlertsView(APIView):
         
         
         return response(data, SUCCESS, status.HTTP_200_OK)
+
+class UpdateAlertStatusView(APIView):
+    permission_classes = [IsAdmin]
+
+    def patch(self, request, pk):
+        try:
+            alert = Alert.objects.get(pk=pk)
+            serializer = UpdateAlertStatusSerializer(alert, data=request.data)
+
+            if serializer.is_valid():
+                alert.save()
+                return response(True, SUCCESS, status.HTTP_200_OK)
+            return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return response(False, ERROR, status.HTTP_400_BAD_REQUEST)
+            
     
 class FindAlertView(APIView):
     permission_classes = [IsAdmin]
@@ -87,10 +121,16 @@ class CreateAlertView(APIView):
         }
         
         serializer = AlertSerializer(data=alert_data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return response(serializer.data, SUCCESS, status.HTTP_201_CREATED)
-    
+
+        try:
+            if serializer.is_valid():
+                serializer.save()
+                return response(serializer.data, SUCCESS, status.HTTP_201_CREATED)
+            else:
+                return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+                return response(False, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+
     
 class SendSmsView(APIView):
     permission_classes = [IsAdmin]
@@ -124,11 +164,17 @@ class SendDispatchView(APIView):
             raise ValidationError({"error": "alert_id and department_id is required!"})
             
         try:
-        #Alert Data 
+            #Alert Data 
             alert = Alert.objects.get(id=alert_id)
-            alert_serializer = AlertSerializer(alert)
+
+            if alert.alert_status == 'ongoing':
+                return response("The emergency alert is already ongoing!", BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+
             alert.admin = request.user.admins
+            alert.alert_status = 'ongoing'
             alert.save()
+
+            alert_serializer = AlertSerializer(alert)
             alert_data = alert_serializer.data
             
             # Department Data

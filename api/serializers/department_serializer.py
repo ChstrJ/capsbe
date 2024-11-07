@@ -45,7 +45,6 @@ class DepartmentSerializer(serializers.ModelSerializer):
     address = serializers.CharField(
         max_length=50,
         min_length=3,
-        validators=[letters_only],
         required=True,
         error_messages={
             'blank': 'Address is required.'

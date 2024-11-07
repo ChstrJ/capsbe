@@ -32,6 +32,7 @@ from .views.alert_view import (
     DeleteAlertView,
     FindAlertView,
     SendDispatchView,
+    UpdateAlertStatusView,
 )
 
 urlpatterns = [
@@ -60,6 +61,7 @@ urlpatterns = [
     path('alerts', ListAlertsView.as_view(), name='list-alert'), # get
     path('alerts/delete/<uuid:pk>', DeleteAlertView.as_view(), name='delete-alert'), # delete
     path('alerts/<uuid:pk>', FindAlertView.as_view(), name='find-alert'), # get
+    path('alerts/update/<uuid:pk>', UpdateAlertStatusView.as_view(), name='update-alert'), # patch
     path('send-alert', CreateAlertView.as_view(), name='send-alert'), # post
     path('send-dispatch', SendDispatchView.as_view(), name='send-dispatch'), # post
 ]

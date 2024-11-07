@@ -18,13 +18,14 @@ def format_response(data, message, code):
 def now():
     return datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-def response(data, message, status, code = None):
-    
-    if status >= 200 or status <= 300:
+def response(data, message, status):
+    code = "";
+
+    if status in range(200, 300):
         code = "success"
-    elif status >= 400 or status <= 500:
+    else:
         code = "error"
-    
+
     return Response(format_response(data, message, code), status)
 
 def respond_sms_response(dispatch_data, user_data):

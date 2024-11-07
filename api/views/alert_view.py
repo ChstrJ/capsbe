@@ -13,7 +13,7 @@ from ..services.twilio import TwilioService
 from ..services.email import EmailService
 from ..services.sms import SMSService
 
-class CheckAlertActivity(APIView):
+class CheckAlertActivityView(APIView):
     permission_classes = [IsResident]
 
     def get(self, request):

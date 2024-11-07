@@ -66,12 +66,13 @@ class CreateDepartmentView(APIView):
         serializer = DepartmentSerializer(data=request.data)
         
         try:
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
+            if serializer.is_valid():
+                serializer.save()
+                return response(serializer.data, SUCCESS, status.HTTP_201_CREATED)
+            return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
         except IntegrityError:
             return response(False, EXISTS, status.HTTP_400_BAD_REQUEST)
         
-        return response(serializer.data, SUCCESS, status.HTTP_201_CREATED)
     
 class SetToAvailable(APIView):
     permission_classes = [IsAdmin]
@@ -96,6 +97,7 @@ class UpdateDepartmentView(APIView):
             if serializer.is_valid():
                 serializer.save()
                 return response(True, UPDATED, status.HTTP_200_OK)
+            return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
         except Department.DoesNotExist:
             return response(False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
         except IntegrityError:

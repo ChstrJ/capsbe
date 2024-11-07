@@ -10,6 +10,14 @@ class AlertSerializer(serializers.ModelSerializer):
     ('health', 'Health'),
     ('police', 'Police')
     )
+
+    ALERT_STATUS = (
+    ('ongoing', 'Ongoing'),
+    ('dismissed', 'Dismissed'),
+    ('pending', 'Pending'),
+    ('done', 'Done'),
+    )
+
     
     resident = serializers.PrimaryKeyRelatedField(queryset=Resident.objects.all(), required=False)
     admin = serializers.PrimaryKeyRelatedField(queryset=Admin.objects.all(), required=False)
@@ -30,6 +38,15 @@ class AlertSerializer(serializers.ModelSerializer):
             'invalid_choice': 'Please choose the following: police, health, fire'
         }
     )
+
+    alert_status = serializers.ChoiceField(
+        required=False,
+        choices=ALERT_STATUS,
+        error_messages={
+            'invalid_choice': 'Please choose the following: ongoing, pending, dismissed, done'
+        }
+    )
+
     
     latitude = serializers.DecimalField(
         max_digits=12,
@@ -52,7 +69,28 @@ class AlertSerializer(serializers.ModelSerializer):
     class Meta:
         model = Alert
         fields = '__all__'
-        
+
+class UpdateAlertStatusSerializer(serializers.ModelSerializer):
+
+    ALERT_STATUS = (
+    ('ongoing', 'Ongoing'),
+    ('dismissed', 'Dismissed'),
+    ('pending', 'Pending'),
+    ('done', 'Done'),
+    )
+    
+    alert_status = serializers.ChoiceField(
+        required=True,
+        choices=ALERT_STATUS,
+        error_messages={
+            'invalid_choice': 'Please choose the following: ongoing, pending, dismissed, done'
+        }
+    )
+
+    class Meta:
+        model = Alert
+        fields = '__all__'
+
 
 class SMSSerializer(serializers.Serializer):
     

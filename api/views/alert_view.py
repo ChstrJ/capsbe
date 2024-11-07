@@ -4,7 +4,7 @@ from rest_framework.exceptions import ValidationError
 from django.conf import settings
 from ..permissions import IsAdmin, IsResident
 from ..serializers.user_serializer import ResidentSerializer, UserSerializer
-from ..serializers.alert_serializer import AlertSerializer, SMSSerializer
+from ..serializers.alert_serializer import AlertSerializer, SMSSerializer, UpdateAlertStatusSerializer
 from ..serializers.department_serializer import DepartmentSerializer
 from ..messages import *
 from ..helpers import response, convert_to_639, send_sms_response, send_email_subject, send_email_message, respond_email_message, respond_sms_response, respond_email_subject
@@ -54,6 +54,22 @@ class ListAlertsView(APIView):
         
         
         return response(data, SUCCESS, status.HTTP_200_OK)
+
+class UpdateAlertStatusView(APIView):
+    permission_classes = [IsAdmin]
+
+    def patch(self, request, pk):
+        try:
+            alert = Alert.objects.get(pk=pk)
+            serializer = UpdateAlertStatusSerializer(alert, data=request.data)
+
+            if serializer.is_valid():
+                alert.save()
+                return response(True, SUCCESS, status.HTTP_200_OK)
+            return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return response(False, ERROR, status.HTTP_400_BAD_REQUEST)
+            
     
 class FindAlertView(APIView):
     permission_classes = [IsAdmin]

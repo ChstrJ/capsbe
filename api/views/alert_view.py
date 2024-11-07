@@ -38,6 +38,7 @@ class ListAlertsView(APIView):
                 "resident": alerts.get('resident'),
                 "admin": alerts.get('admin'),
                 "alert_type": alerts.get('alert_type'),
+                "alert_status": alerts.get('alert_status'),
                 "message": alerts.get('message'),
                 "latitude": alerts.get('latitude'),
                 "longitude": alerts.get('longitude'),
@@ -87,10 +88,16 @@ class CreateAlertView(APIView):
         }
         
         serializer = AlertSerializer(data=alert_data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return response(serializer.data, SUCCESS, status.HTTP_201_CREATED)
-    
+
+        try:
+            if serializer.is_valid():
+                serializer.save()
+                return response(serializer.data, SUCCESS, status.HTTP_201_CREATED)
+            else:
+                return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+                return response(False, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+
     
 class SendSmsView(APIView):
     permission_classes = [IsAdmin]

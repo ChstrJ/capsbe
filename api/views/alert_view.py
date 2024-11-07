@@ -147,11 +147,17 @@ class SendDispatchView(APIView):
             raise ValidationError({"error": "alert_id and department_id is required!"})
             
         try:
-        #Alert Data 
+            #Alert Data 
             alert = Alert.objects.get(id=alert_id)
-            alert_serializer = AlertSerializer(alert)
+
+            if alert.alert_status == 'ongoing':
+                return response("The emergency alert is already ongoing!", BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
+
             alert.admin = request.user.admins
+            alert.alert_status = 'ongoing'
             alert.save()
+
+            alert_serializer = AlertSerializer(alert)
             alert_data = alert_serializer.data
             
             # Department Data

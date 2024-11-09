@@ -222,3 +222,15 @@ class GenerateAdminAccountView(APIView):
             return response(False, EXISTS, status.HTTP_400_BAD_REQUEST)
         
         return response("Success!", SUCCESS, status.HTTP_200_OK)
+
+
+class GetAccountView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+
+        user = User.objects.get(id=pk)
+        serializer = UserSerializer(user)
+        serializer.is_valid(raise_exception=True)
+
+        return response(serializer.data, SUCCESS, status.HTTP_200_OK)

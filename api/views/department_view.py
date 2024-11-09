@@ -81,11 +81,16 @@ class SetToAvailable(APIView):
         department = Department.objects.get(pk=pk)
         serializer = DepartmentSerializer(department, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)
+        
+        print(serializer.data['status'])
+        
+        if serializer.data['status'] == 'available':
+            return response(False, 'The department is already set to available.', status.HTTP_400_BAD_REQUEST)
+        
         department.status = 'available'
         department.save()
         
         return response(True, SUCCESS, status.HTTP_200_OK)
-    
     
 
 class UpdateDepartmentView(APIView):

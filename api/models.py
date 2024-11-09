@@ -2,6 +2,7 @@ import uuid
 from django.db import models
 from django.core.validators import EmailValidator
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
 
 class User(AbstractUser):
@@ -21,8 +22,8 @@ class User(AbstractUser):
     email = models.CharField(max_length=100, null=True, unique=True, validators=[EmailValidator()])
     password = models.CharField(max_length=100, null=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)                                                
-    updated_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.IntegerField(default=timezone.now().timestamp())
+    updated_at = models.IntegerField(default=timezone.now().timestamp())
 
     def __str__(self):
         return f"{self.id} {self.user_type}"
@@ -30,8 +31,8 @@ class User(AbstractUser):
 class Admin(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name="admins")
-    created_at = models.DateTimeField(auto_now_add=True)                                                
-    updated_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.IntegerField(default=timezone.now().timestamp())
+    updated_at = models.IntegerField(default=timezone.now().timestamp())
 
     def __str__(self):
         return f"{self.id}"
@@ -43,8 +44,8 @@ class Resident(models.Model):
     contact_number = models.CharField(max_length=100, null=True)
     landmark = models.CharField(max_length=100, null=True)
     verified = models.BooleanField(default=False, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.IntegerField(default=timezone.now().timestamp())
+    updated_at = models.IntegerField(default=timezone.now().timestamp())
     
     def __str__(self):
         return f"{self.id}"
@@ -73,8 +74,8 @@ class Alert(models.Model):
     latitude = models.DecimalField(max_digits=12, decimal_places=8, null=True)
     longitude = models.DecimalField(max_digits=12, decimal_places=8, null=True)
     message = models.CharField(max_length=100, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)                                                   
-    updated_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.IntegerField(default=timezone.now().timestamp())
+    updated_at = models.IntegerField(default=timezone.now().timestamp())
     
     def __str__(self):
         return f"{self.id}"
@@ -99,8 +100,8 @@ class Department(models.Model):
     address = models.CharField(max_length=100, null=True)
     status = models.CharField(max_length=10, choices=STATUS, null=True, default="available")
     tags = models.CharField(max_length=100, choices=TAGS, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.IntegerField(default=timezone.now().timestamp())
+    updated_at = models.IntegerField(default=timezone.now().timestamp())
     
     def __str__(self):
         return self.id 

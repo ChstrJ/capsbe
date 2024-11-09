@@ -9,7 +9,7 @@ from datetime import datetime
 def format_response(data, message, code):
         
     return {
-        'code': code,
+        'status': code,
         'message': message,
         'timestamp': int(timezone.now().timestamp()),
         'data': data

@@ -77,7 +77,7 @@ class CreateDepartmentView(APIView):
 class SetToAvailable(APIView):
     permission_classes = [IsAdmin]
     
-    def post(self, request, pk):
+    def patch(self, request, pk):
         department = Department.objects.get(pk=pk)
         serializer = DepartmentSerializer(department, data=request.data, partial=True)
         serializer.is_valid(raise_exception=True)

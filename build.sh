@@ -16,7 +16,7 @@ python manage.py collectstatic --no-input
 # fi
 
 # Apply any outstanding database migrations
-python manage.py makemigrations
+# python manage.py makemigrations
 python manage.py migrate
 
 # Generate test account

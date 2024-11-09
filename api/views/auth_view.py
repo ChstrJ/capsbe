@@ -1,8 +1,9 @@
 from rest_framework.views import APIView
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.models import Token
 from django.db import IntegrityError
+from django.contrib.auth.hashers import make_password, check_password
 from ..serializers.user_serializer import UserSerializer, ResidentSerializer, AdminSerializer, LoginSerializer
 from ..messages import *
 from ..helpers import response
@@ -113,7 +114,57 @@ class ResidentRegisterView(APIView):
             return response(str(e), EXISTS, status.HTTP_400_BAD_REQUEST)
         
         return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
-                
+    
+class UpdateUserView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def patch(self, request):
+        user_id = request.user.id
+        user = User.objects.get(id=user_id)
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        
+        if serializer.is_valid():
+            serializer.save()
+            return response(serializer.data, SUCCESS, status.HTTP_200_OK)
+        else:
+            return response(serializer.errors, ERROR, status.HTTP_400_BAD_REQUEST)
+        
+class UpdatePasswordView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def patch(self, request):
+        user_id = request.user.id
+        user = User.objects.get(id=user_id)
+        serializer = UserSerializer(user, data=request.data, partial=True)
+        
+        current_pass = request.data.get('current_password')
+        new_password = request.data.get('new_password')
+        confirm_password = request.data.get('confirm_password')
+        
+        if not current_pass or not new_password or not confirm_password:
+            return response({
+                    'current_password': 'This field is required!',
+                    'new_password': 'This field is required!',
+                    'confirm_password': 'This field is required!'
+                }, ERROR, status.HTTP_400_BAD_REQUEST)
+        
+        if not check_password(current_pass, user.password):
+            return response({
+                'current_password': 'Your password does not match in our database.'
+            }, ERROR, status.HTTP_400_BAD_REQUEST)
+        
+        if new_password != confirm_password:
+            return response({
+                'confirm_password': 'This field does not match with new_password.'
+                }, ERROR, status.HTTP_400_BAD_REQUEST)
+        
+        if serializer.is_valid():
+            user.password = make_password(new_password)
+            user.save()
+            return response(True, SUCCESS, status.HTTP_200_OK)
+        
+        return response(False, ERROR, status.HTTP_400_BAD_REQUEST)
+        
 class AdminRegisterView(APIView):
     permission_classes = [AllowAny]
     

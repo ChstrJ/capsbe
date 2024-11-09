@@ -14,6 +14,8 @@ from .views.auth_view import (
     AdminRegisterView,
     ResidentRegisterView,
     GenerateAdminAccountView,
+    UpdateUserView,
+    UpdatePasswordView,
 )
 
 from .views.department_view import (
@@ -38,6 +40,8 @@ from .views.alert_view import (
 
 urlpatterns = [
     path('account/generate', GenerateAdminAccountView.as_view(), name='generate-admin'), # post
+    path('account/update', UpdateUserView.as_view(), name='update-account'), # patch
+    path('account/update-password', UpdatePasswordView.as_view(), name='update-password'), # patch
     
     path('residents', GetResidentsView.as_view(), name='get-residents'),  # get
     path('residents/paginate', PaginateResidentsView.as_view(), name='paginate-residents'),  # get

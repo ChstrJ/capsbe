@@ -6,6 +6,9 @@ from .models import Resident
 from faker import Faker
 from datetime import datetime
 
+def get_current_timestamp():
+    return int(timezone.now().timestamp())
+
 def format_response(data, message, code):
         
     return {

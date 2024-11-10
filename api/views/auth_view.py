@@ -137,18 +137,20 @@ class UpdatePasswordView(APIView):
         user = User.objects.get(id=user_id)
         serializer = UserSerializer(user, data=request.data, partial=True)
         
-        current_pass = request.data.get('current_password')
+        current_password = request.data.get('current_password')
         new_password = request.data.get('new_password')
         confirm_password = request.data.get('confirm_password')
         
-        if not current_pass or not new_password or not confirm_password:
+        data = {current_password, new_password, confirm_password}
+        
+        if not current_password or not new_password or not confirm_password:
             return response({
                     'current_password': 'This field is required!',
                     'new_password': 'This field is required!',
                     'confirm_password': 'This field is required!'
                 }, ERROR, status.HTTP_400_BAD_REQUEST)
         
-        if not check_password(current_pass, user.password):
+        if not check_password(current_password, user.password):
             return response({
                 'current_password': 'Your password does not match in our database.'
             }, ERROR, status.HTTP_400_BAD_REQUEST)

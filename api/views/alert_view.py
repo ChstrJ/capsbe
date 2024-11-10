@@ -161,7 +161,10 @@ class SendDispatchView(APIView):
         alert_id = request.data.get("alert_id")
         
         if not dept_id or not alert_id:
-            raise ValidationError({"error": "alert_id and department_id is required!"})
+            return response({
+                'alert_id': 'This field is required.',
+                'department_id': 'This field is required.'
+                }, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
             
         try:
             #Alert Data 
@@ -184,6 +187,9 @@ class SendDispatchView(APIView):
             dept.status = 'dispatched'
             dept.save()
             dept_data = dept_serializer.data
+            
+            if alert.alert_status != dept.tags:
+                return response(False, 'The alert type and department tags must have the same value.', status.HTTP_400_BAD_REQUEST)
             
             # Residents Data
             resident = Resident.objects.get(id=alert_data['resident'])

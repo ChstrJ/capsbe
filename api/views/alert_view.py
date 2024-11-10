@@ -63,8 +63,8 @@ class ListAlertsView(APIView):
                 "last_name": user_data.get('last_name'),
                 "address": resident_data.get('address'),
                 "landmark": resident_data.get('landmark'),
-                "created_at": user_data.get('created_at'),
-                "updated_at": user_data.get('updated_at'),
+                "created_at": alerts.get('created_at'),
+                "updated_at": alerts.get('updated_at'),
             }
             
             data.append(formatted_data)

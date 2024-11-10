@@ -11,6 +11,7 @@ from .views.resident_view import (
 
 from .views.auth_view import (
     LoginView,
+    LogoutView,
     AdminRegisterView,
     ResidentRegisterView,
     GenerateAdminAccountView,
@@ -43,7 +44,7 @@ urlpatterns = [
     path('account/generate', GenerateAdminAccountView.as_view(), name='generate-admin'), # post
     path('account/update', UpdateUserView.as_view(), name='update-account'), # patch
     path('account/update-password', UpdatePasswordView.as_view(), name='update-password'), # patch
-    path('account/<uuid:pk>', GetAccountView.as_view(), name='get-account'), # get
+    path('account', GetAccountView.as_view(), name='get-account'), # get
     
     path('residents', GetResidentsView.as_view(), name='get-residents'),  # get
     path('residents/paginate', PaginateResidentsView.as_view(), name='paginate-residents'),  # get
@@ -54,6 +55,7 @@ urlpatterns = [
     path('residents/verify/<uuid:pk>', VerifyResidentView.as_view(), name='verify-resident'), # patch
     
     path('auth/login', LoginView.as_view(), name='admin-login'), # post
+    path('auth/logout', LogoutView.as_view(), name='admin-logout'), # post
     path('auth/register/admin', AdminRegisterView.as_view(), name='admin-register'), # post
     path('auth/register/resident', ResidentRegisterView.as_view(), name='resident-register'), # post
     

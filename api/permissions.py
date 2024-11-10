@@ -27,5 +27,7 @@ class IsResident(BasePermission):
         
         except PermissionError as e:
             raise PermissionDenied("Authentication token is not provided.")
+        except Exception as e:
+            raise PermissionDenied("Permission Denied.")
                 
         return True

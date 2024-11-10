@@ -227,10 +227,24 @@ class GenerateAdminAccountView(APIView):
 class GetAccountView(APIView):
     permission_classes = [IsAuthenticated]
 
-    def get(self, request, pk):
-
-        user = User.objects.get(id=pk)
+    def get(self, request):
+        user_id = request.user.id
+        user = User.objects.get(id=user_id)
+        
         serializer = UserSerializer(user)
-        serializer.is_valid(raise_exception=True)
-
         return response(serializer.data, SUCCESS, status.HTTP_200_OK)
+    
+class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def post(self, request):
+        user_id = request.user.id
+        
+        try:
+            user = User.objects.get(id=user_id)
+            token = Token.objects.get(user=user)
+            token.delete()
+            return response(True, 'Succesfully logged out.', status.HTTP_200_OK)
+        except Exception as e:
+            return response(False, 'Token not found', status.HTTP_400_BAD_REQUEST)
+        

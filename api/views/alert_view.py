@@ -34,7 +34,14 @@ class ListAlertsView(APIView):
     permission_classes = [IsAdmin]
     
     def get(self, request):
+
+        status = request.data.get('status')
+
         alerts = Alert.objects.all().order_by('-created_at', '-updated_at')
+
+        if status:
+            alerts = alerts.filter(alert_status=status)
+
         serializer = AlertSerializer(alerts, many=True)
         
         data = []

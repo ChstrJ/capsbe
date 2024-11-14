@@ -34,8 +34,7 @@ class ListAlertsView(APIView):
     permission_classes = [IsAdmin]
     
     def get(self, request):
-
-        status = request.data.get('status')
+        status = request.GET.get('status')
 
         alerts = Alert.objects.all().order_by('-created_at', '-updated_at')
 
@@ -76,8 +75,8 @@ class ListAlertsView(APIView):
             
             data.append(formatted_data)
         
+        return response(data, SUCCESS, 200)
         
-        return response(data, SUCCESS, status.HTTP_200_OK)
 
 class UpdateAlertStatusView(APIView):
     permission_classes = [IsAdmin]

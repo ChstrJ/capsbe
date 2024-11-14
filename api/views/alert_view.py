@@ -35,11 +35,16 @@ class ListAlertsView(APIView):
     
     def get(self, request):
         status = request.GET.get('status')
+        alert_type = request.GET.get('type')
 
         alerts = Alert.objects.all().order_by('-created_at', '-updated_at')
 
         if status:
             alerts = alerts.filter(alert_status=status)
+
+        if alert_type:
+            alerts = alerts.filter(alert_type=alert_type)
+
 
         serializer = AlertSerializer(alerts, many=True)
         

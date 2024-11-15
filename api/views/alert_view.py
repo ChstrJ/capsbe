@@ -1,4 +1,5 @@
 from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 from django.conf import settings
@@ -19,16 +20,10 @@ class CheckAlertActivityView(APIView):
     def get(self, request):
         user_id = request.user.residents
         
-        alert = Alert.objects.filter(
-            resident=user_id, 
-            alert_status__in=['ongoing', 'pending']
-        ).first()
-        
-        if not alert:
-            return response(False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
+        alert = Alert.objects.filter(resident=user_id).first()
         
         serializer = AlertSerializer(alert)
-        return response({"alert_status": serializer.data['alert_status']}, SUCCESS, status.HTTP_200_OK)
+        return Response({"alert_status": serializer.data['alert_status']})
 
 class ListAlertsView(APIView):
     permission_classes = [IsAdmin]

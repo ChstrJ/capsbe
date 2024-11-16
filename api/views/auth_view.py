@@ -143,6 +143,13 @@ class UpdatePasswordView(APIView):
         
         data = {current_password, new_password, confirm_password}
         
+        if not current_password or not new_password or not confirm_password:
+            return response({
+                    'current_password': 'This field is required!',
+                    'new_password': 'This field is required!',
+                    'confirm_password': 'This field is required!',
+                }, ERROR, status.HTTP_400_BAD_REQUEST)
+        
         if not current_password:
             return response({
                     'current_password': 'This field is required!',

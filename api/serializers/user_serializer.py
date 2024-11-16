@@ -129,4 +129,21 @@ class ResidentSerializer(serializers.ModelSerializer):
 class LoginSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True) 
     password = serializers.CharField(required=True, write_only=True)
+ 
+ 
+class PasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(required=True) 
+    new_password = serializers.CharField(required=True)
+    confirm_password = serializers.CharField(required=True)
+    
+    def validate(self, data):
+        new_pass = data.get('new_password')
+        conf_pass = data.get('confirm_password')
+        
+        if new_pass != conf_pass:
+            raise serializers.ValidationError({
+                'confirm_password': 'This field do not match with new_password'
+                })
+        
+        return data
         

@@ -4,7 +4,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.authtoken.models import Token
 from django.db import IntegrityError
 from django.contrib.auth.hashers import make_password, check_password
-from ..serializers.user_serializer import UserSerializer, ResidentSerializer, AdminSerializer, LoginSerializer
+from ..serializers.user_serializer import UserSerializer, ResidentSerializer, AdminSerializer, LoginSerializer, PasswordSerializer
 from ..messages import *
 from ..helpers import response
 from ..models import User, Resident
@@ -136,47 +136,18 @@ class UpdatePasswordView(APIView):
         user_id = request.user.id
         user = User.objects.get(id=user_id)
         serializer = UserSerializer(user, data=request.data, partial=True)
+        pass_serializer = PasswordSerializer(data=request.data)
         
-        current_password = request.data.get('current_password')
-        new_password = request.data.get('new_password')
-        confirm_password = request.data.get('confirm_password')
-        
-        data = {current_password, new_password, confirm_password}
-        
-        if not current_password or not new_password or not confirm_password:
-            return response({
-                    'current_password': 'This field is required!',
-                    'new_password': 'This field is required!',
-                    'confirm_password': 'This field is required!',
-                }, ERROR, status.HTTP_400_BAD_REQUEST)
-        
-        if not current_password:
-            return response({
-                    'current_password': 'This field is required!',
-                }, ERROR, status.HTTP_400_BAD_REQUEST)
-        
-        if not new_password:
-            return response({
-                    'new_password': 'This field is required!',
-                }, ERROR, status.HTTP_400_BAD_REQUEST)
+        if not pass_serializer.is_valid():
+            return response(pass_serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
             
-        if not confirm_password:
-            return response({
-                    'confirm_password': 'This field is required!',
-                }, ERROR, status.HTTP_400_BAD_REQUEST)
-        
-        if not check_password(current_password, user.password):
+        if not check_password(pass_serializer.data['current_password'], user.password):
             return response({
                 'current_password': 'Your password does not match in our database.'
             }, ERROR, status.HTTP_400_BAD_REQUEST)
         
-        if new_password != confirm_password:
-            return response({
-                'confirm_password': 'This field does not match with new_password.'
-                }, ERROR, status.HTTP_400_BAD_REQUEST)
-        
         if serializer.is_valid():
-            user.password = make_password(new_password)
+            user.password = make_password(pass_serializer.data['new_password'])
             user.save()
             return response(True, SUCCESS, status.HTTP_200_OK)
         

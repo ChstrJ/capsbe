@@ -20,8 +20,11 @@ class CheckAlertActivityView(APIView):
     def get(self, request):
         user_id = request.user.residents
         
-        alert = Alert.objects.filter(resident=user_id).first()
-        
+        try:
+            alert = Alert.objects.filter(resident=user_id).first()
+        except Exception as e:
+            return Response({"alert_status": "none"})
+
         serializer = AlertSerializer(alert)
         return Response({"alert_status": serializer.data['alert_status']})
 

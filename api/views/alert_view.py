@@ -1,4 +1,5 @@
 from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.exceptions import ValidationError
 from django.conf import settings
@@ -19,22 +20,27 @@ class CheckAlertActivityView(APIView):
     def get(self, request):
         user_id = request.user.residents
         
-        alert = Alert.objects.filter(
-            resident=user_id, 
-            alert_status__in=['ongoing', 'pending']
-        ).first()
-        
-        if not alert:
-            return response(False, NOT_FOUND, status.HTTP_404_NOT_FOUND)
+        alert = Alert.objects.filter(resident=user_id).first()
         
         serializer = AlertSerializer(alert)
-        return response({"alert_status": serializer.data['alert_status']}, SUCCESS, status.HTTP_200_OK)
+        return Response({"alert_status": serializer.data['alert_status']})
 
 class ListAlertsView(APIView):
     permission_classes = [IsAdmin]
     
     def get(self, request):
+        status = request.GET.get('status')
+        alert_type = request.GET.get('type')
+
         alerts = Alert.objects.all().order_by('-created_at', '-updated_at')
+
+        if status:
+            alerts = alerts.filter(alert_status=status)
+
+        if alert_type:
+            alerts = alerts.filter(alert_type=alert_type)
+
+
         serializer = AlertSerializer(alerts, many=True)
         
         data = []
@@ -69,8 +75,8 @@ class ListAlertsView(APIView):
             
             data.append(formatted_data)
         
+        return response(data, SUCCESS, 200)
         
-        return response(data, SUCCESS, status.HTTP_200_OK)
 
 class UpdateAlertStatusView(APIView):
     permission_classes = [IsAdmin]
@@ -187,9 +193,6 @@ class SendDispatchView(APIView):
             dept.status = 'dispatched'
             dept.save()
             dept_data = dept_serializer.data
-            
-            if alert.alert_status != dept.tags:
-                return response(False, 'The alert type and department tags must have the same value.', status.HTTP_400_BAD_REQUEST)
             
             # Residents Data
             resident = Resident.objects.get(id=alert_data['resident'])

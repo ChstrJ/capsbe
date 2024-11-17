@@ -90,7 +90,7 @@ class SetToAvailable(APIView):
         department.status = 'available'
         department.save()
         
-        return response(True, SUCCESS, status.HTTP_200_OK)
+        return response(True, 'The department status succesfully updated.', status.HTTP_200_OK)
     
 
 class UpdateDepartmentView(APIView):

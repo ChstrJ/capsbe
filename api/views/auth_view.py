@@ -102,8 +102,8 @@ class ResidentRegisterView(APIView):
                 "email": resident.user.email,
                 "verified": resident.verified,
                 "user_type": resident.user.user_type,
-                "created_at": resident.user.created_at.isoformat(),
-                "updated_at": resident.user.updated_at.isoformat(),
+                "created_at": resident.user.created_at,
+                "updated_at": resident.user.updated_at,
                 "contact_number": resident.contact_number,
                 "address": resident.address,
                 "landmark": resident.landmark,
@@ -111,7 +111,7 @@ class ResidentRegisterView(APIView):
                 
                 return response(response_data, CREATED, status.HTTP_201_CREATED)
         except IntegrityError as e:
-            return response(str(e), EXISTS, status.HTTP_400_BAD_REQUEST)
+            return response(False, EXISTS, status.HTTP_400_BAD_REQUEST)
         
         return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
     

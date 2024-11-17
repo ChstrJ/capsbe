@@ -87,6 +87,7 @@ class UpdateAlertStatusView(APIView):
             serializer = UpdateAlertStatusSerializer(alert, data=request.data)
 
             if serializer.is_valid():
+                alert.alert_status = request.data.get('alert_status')
                 alert.save()
                 return response(True, SUCCESS, status.HTTP_200_OK)
             return response(serializer.errors, BAD_REQUEST, status.HTTP_400_BAD_REQUEST)

@@ -32,6 +32,7 @@ from .views.department_view import (
 
 from .views.alert_view import (
     ListAlertsView,
+    ResidentAlertsView,
     CreateAlertView,
     DeleteAlertView,
     FindAlertView,
@@ -47,6 +48,7 @@ urlpatterns = [
     path('account', GetAccountView.as_view(), name='get-account'), # get
     
     path('residents', GetResidentsView.as_view(), name='get-residents'),  # get
+    path('resident-alerts', ResidentAlertsView.as_view(), name='get-residents-alertss'),  # get
     path('residents/paginate', PaginateResidentsView.as_view(), name='paginate-residents'),  # get
     path('residents/<uuid:pk>', FindResidentView.as_view(), name='find-resident'), # get/id
     path('residents/create', CreateResidentView.as_view(), name='create-resident'), # post

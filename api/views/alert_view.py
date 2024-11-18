@@ -76,6 +76,16 @@ class ListAlertsView(APIView):
             data.append(formatted_data)
         
         return response(data, SUCCESS, 200)
+    
+class ResidentAlertsView(APIView):
+    permission_classes = [IsResident]
+    def get(self, request):
+        resident_id = request.user.residents
+        alerts = Alert.objects.all().filter(resident=resident_id).order_by('-alert_status')
+        serializer = AlertSerializer(alerts, many=True)
+        
+        return response(serializer.data, SUCCESS, status.HTTP_200_OK)
+        
         
 
 class UpdateAlertStatusView(APIView):

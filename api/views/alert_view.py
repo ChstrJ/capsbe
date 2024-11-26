@@ -192,8 +192,6 @@ class SendDispatchView(APIView):
 
             alert.admin = request.user.admins
             alert.alert_status = 'ongoing'
-            alert.department = dept_id
-            alert.save()
 
             alert_serializer = AlertSerializer(alert)
             alert_data = alert_serializer.data
@@ -203,8 +201,10 @@ class SendDispatchView(APIView):
             dept_serializer = DepartmentSerializer(dept, data=request.data, partial=True)
             dept_serializer.is_valid(raise_exception=True)
             dept.status = 'dispatched'
-            dept.save()
             dept_data = dept_serializer.data
+            alert.department = dept
+            alert.save()
+            dept.save()
             
             # Residents Data
             resident = Resident.objects.get(id=alert_data['resident'])
@@ -212,6 +212,7 @@ class SendDispatchView(APIView):
             resident_data = resident_serializer.data
             user_data = resident_data.get('user')
         except Exception as e:
+            print(e)
             return response("Invalid Alert ID or Department ID", NOT_FOUND, status.HTTP_404_NOT_FOUND)
         
         # Combine all data
@@ -252,6 +253,7 @@ class SendDispatchView(APIView):
             sms.send_sms(resident_no, respond_sms)
             return response(True, SENT, status.HTTP_200_OK)
         except Exception as e:
+            print(e)
             return response(str(e), BAD_REQUEST, status.HTTP_400_BAD_REQUEST)
         
         

@@ -52,32 +52,6 @@ class Resident(models.Model):
     def __str__(self):
         return f"{self.id}"
 
-class Alert(models.Model):
-    
-    ALERT_TYPE = (
-    ('fire', 'Fire'),
-    ('health', 'Health'),
-    ('police', 'Police')
-    )
-
-    ALERT_STATUS = (
-    ('ongoing', 'Ongoing'),
-    ('dismissed', 'Dismissed'),
-    ('pending', 'Pending'),
-    ('done', 'Done'),
-    )
-
-    
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    resident = models.ForeignKey(Resident, on_delete=models.CASCADE, null=True, related_name="residents")
-    admin = models.ForeignKey(Admin, on_delete=models.CASCADE, null=True, related_name="admins")
-    alert_type = models.CharField(max_length=100, choices=ALERT_TYPE, null=True)
-    alert_status = models.CharField(max_length=100, choices=ALERT_STATUS, default="pending", null=True)
-    latitude = models.DecimalField(max_digits=12, decimal_places=8, null=True)
-    longitude = models.DecimalField(max_digits=12, decimal_places=8, null=True)
-    message = models.CharField(max_length=100, null=True)
-    created_at = models.IntegerField(default=get_current_timestamp)
-    updated_at = models.IntegerField(default=get_current_timestamp)
     
     def __str__(self):
         return f"{self.id}"
@@ -108,3 +82,30 @@ class Department(models.Model):
     def __str__(self):
         return self.id 
 
+class Alert(models.Model):
+    
+    ALERT_TYPE = (
+    ('fire', 'Fire'),
+    ('health', 'Health'),
+    ('police', 'Police')
+    )
+
+    ALERT_STATUS = (
+    ('ongoing', 'Ongoing'),
+    ('dismissed', 'Dismissed'),
+    ('pending', 'Pending'),
+    ('done', 'Done'),
+    )
+
+    
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    resident = models.ForeignKey(Resident, on_delete=models.CASCADE, null=True, related_name="residents")
+    admin = models.ForeignKey(Admin, on_delete=models.CASCADE, null=True, related_name="admins")
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, null=True, related_name="departments")
+    alert_type = models.CharField(max_length=100, choices=ALERT_TYPE, null=True)
+    alert_status = models.CharField(max_length=100, choices=ALERT_STATUS, default="pending", null=True)
+    latitude = models.DecimalField(max_digits=12, decimal_places=8, null=True)
+    longitude = models.DecimalField(max_digits=12, decimal_places=8, null=True)
+    message = models.CharField(max_length=100, null=True)
+    created_at = models.IntegerField(default=get_current_timestamp)
+    updated_at = models.IntegerField(default=get_current_timestamp)

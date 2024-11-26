@@ -192,6 +192,7 @@ class SendDispatchView(APIView):
 
             alert.admin = request.user.admins
             alert.alert_status = 'ongoing'
+            alert.department = dept_id
             alert.save()
 
             alert_serializer = AlertSerializer(alert)

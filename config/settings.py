@@ -126,7 +126,7 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 
 DATABASES = {
-    'default': dj_database_url.parse('postgresql://emergeton_db_jkdy_user:GsU0ahij9f3lhWHtsyhdbXdySzjTJGny@dpg-ct2pjjbqf0us73a02mbg-a.singapore-postgres.render.com/emergeton_db_jkdy')
+    'default': dj_database_url.parse('postgresql://emergeton_db_0l09_user:TM9fltf5iO1yeXstL1Og2fgR5qn5p7aQ@dpg-ctviap3tq21c73ae6nq0-a.singapore-postgres.render.com/emergeton_db_0l09')
 }
 
 
